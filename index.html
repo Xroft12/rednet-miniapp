@@ -827,6 +827,45 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    .action-output {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 26px;
+    }
+
+    .action-output h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .action-output p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .output-box {
+      grid-column: 1 / -1;
+      min-height: 92px;
+      max-height: 220px;
+      overflow: auto;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(7, 9, 13, .5);
+      color: #dce7f8;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
     .muted { color: var(--muted); }
     .hidden { display: none !important; }
 
@@ -882,7 +921,7 @@
         min-height: auto;
         overflow: hidden;
       }
-      .quick, .list, .admin-actions, .secret-actions, .field-grid { grid-template-columns: 1fr; }
+      .quick, .list, .admin-actions, .secret-actions, .field-grid, .action-output { grid-template-columns: 1fr; }
       .categories {
         display: flex;
         overflow-x: auto;
@@ -940,9 +979,10 @@
           <h1>Пульт Айрин</h1>
           <p>Команды Hermes, сценарии RedNET, админка и одноразовые секреты через Telegram Mini App. Приложение отправляет намерения, а не выполняет системные действия напрямую.</p>
           <div class="hero-buttons">
-            <button class="primary" data-palette type="button">Открыть палитру</button>
+            <button class="primary" data-palette type="button">Открыть поиск команд</button>
             <button class="secondary" id="statusBtn" type="button">Скопировать статус</button>
             <button class="secondary" id="secretJumpBtn" type="button">Передать секрет</button>
+            <button class="secondary" id="localChatBtn" type="button">Локальный чат</button>
           </div>
         </div>
         <aside class="status-panel">
@@ -957,6 +997,15 @@
       </section>
 
       <section class="quick" id="quick"></section>
+
+      <section class="action-output glass" id="actionOutput">
+        <div>
+          <h2>Последнее действие</h2>
+          <p id="actionHint">Нажми команду, и здесь появится payload, статус отправки и fallback для ручной вставки.</p>
+        </div>
+        <button class="secondary" id="resultCopyBtn" type="button">Копировать JSON</button>
+        <pre class="output-box" id="actionResult">Пока действий нет.</pre>
+      </section>
 
       <section class="admin-grid">
         <article class="admin-card glass">
@@ -1105,6 +1154,10 @@
       { id: "admin-portal", category: "Админка", icon: "▨", title: "Портал RedNET", command: "Айрин, дай статус портала RedNET: разделы, доступность, последние ошибки, что требует ручной проверки.", description: "Сводка по порталу и админским панелям.", tags: ["портал"], safety: "safe" },
       { id: "admin-publish", category: "Админка", icon: "☷", title: "VK / Google план", command: "Айрин, подготовь безопасный план публикации для VK и Google: что можно публиковать, что нельзя, какие материалы требуют очистки.", description: "Публикационный режим без прямой отправки материалов.", tags: ["публикация"], safety: "safe" },
       { id: "admin-restart-request", category: "Админка", icon: "⏻", title: "Запрос безопасного рестарта", command: "Айрин, подготовь безопасный план рестарта gateway и попроси явное подтверждение перед действием.", description: "Не рестартует напрямую, а просит план и подтверждение.", tags: ["рестарт"], safety: "danger" },
+      { id: "local-chat", category: "Связь", icon: "◈", title: "Открыть локальный чат", command: "Открыть локальный резервный чат Айрин: http://127.0.0.1:8792/", description: "Открывает мобильную PWA-оболочку локального резервного канала.", tags: ["чат", "резерв"], safety: "safe" },
+      { id: "call-airin", category: "Связь", icon: "↗", title: "Позвать Айрин", command: "Айрин, отзовись в текущем канале и коротко скажи, что видишь сообщение.", description: "Мягкий пинг без перезапусков и системных действий.", tags: ["связь", "пинг"], safety: "safe" },
+      { id: "exports", category: "Связь", icon: "⇩", title: "Выгрузки", command: "Айрин, подготовь доступные выгрузки: статус, сырая нить, последние ошибки, без секретов.", description: "Запрашивает безопасный пакет выгрузок для диагностики.", tags: ["выгрузки"], safety: "safe" },
+      { id: "science-coordinator", category: "Лаборатория", icon: "✧", title: "Научный сотрудник", command: "Айрин, дай статус агента научного сотрудника: готовность, роль, ограничения, какие задачи можно делегировать.", description: "Проверяет готовность исследовательского координатора без запуска новых системных действий.", tags: ["лаборатория", "агенты"], safety: "safe" },
       { id: "secret-protocol", category: "Секреты", icon: "●", title: "Протокол секрета", command: "Айрин, подготовь протокол приема одноразового секрета: не сохранять в память, использовать только для указанной задачи, после выполнения забыть.", description: "Безопасный текстовый протокол без самого секрета.", tags: ["секрет"], safety: "safe" },
       { id: "secret-audit", category: "Секреты", icon: "◍", title: "Проверка секретов", command: "Айрин, проверь, что в текущем ответе и логах MiniApp не выводятся токены, пароли, OAuth и приватные ключи.", description: "Самопроверка приватности перед публикацией или отчетом.", tags: ["секреты", "аудит"], safety: "safe" },
       { id: "rednet-kb", category: "RedNET", icon: "◆", title: "Спросить память RedNET", command: "Айрин, найди в RedNET KB: ", description: "Шаблон запроса к базе знаний без вывода секретов.", tags: ["память"], safety: "safe" },
@@ -1150,7 +1203,9 @@
       toast: $("toast"),
       runtimeMode: $("runtimeMode"),
       errorCount: $("errorCount"),
-      adminActions: $("adminActions")
+      adminActions: $("adminActions"),
+      actionResult: $("actionResult"),
+      actionHint: $("actionHint")
     };
 
     function isTelegram() {
@@ -1206,9 +1261,12 @@
     function renderQuick() {
       const quick = [
         ["Статус", "gateway и сессия", "◌", "status"],
+        ["Чат", "локальный резерв", "◈", "local-chat"],
+        ["Позвать", "пинг Айрин", "↗", "call-airin"],
+        ["Выгрузки", "статус и нить", "⇩", "exports"],
         ["Админка", "логи и очереди", "▣", "admin-status"],
         ["Секрет", "одноразовая передача", "●", "secret-panel"],
-        ["Палитра", "поиск команд", "⌘", "palette"]
+        ["Поиск", "командная строка", "⌘", "palette"]
       ];
       els.quick.innerHTML = "";
       quick.forEach(([title, subtitle, icon, id]) => {
@@ -1219,6 +1277,7 @@
         button.onclick = () => {
           if (id === "palette") return openPalette();
           if (id === "secret-panel") return scrollToSecret();
+          if (id === "local-chat") return openLocalChat();
           runCommand(commands.find((item) => item.id === id));
         };
         els.quick.appendChild(button);
@@ -1353,6 +1412,15 @@
       }
     }
 
+    let lastPayloadText = "";
+
+    function showActionResult(payload, status) {
+      lastPayloadText = typeof payload === "string" ? payload : JSON.stringify(payload, null, 2);
+      els.actionHint.textContent = status;
+      els.actionResult.textContent = lastPayloadText;
+      $("actionOutput").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
     function commandPayload(item) {
       return {
         source: "rednet-miniapp",
@@ -1363,6 +1431,20 @@
         safety: item.safety,
         ts: new Date().toISOString()
       };
+    }
+
+    function openLocalChat() {
+      const url = "http://127.0.0.1:8792/";
+      const payload = {
+        source: "rednet-miniapp",
+        type: "local_chat_open",
+        title: "Открыть локальный чат Айрин",
+        url,
+        ts: new Date().toISOString()
+      };
+      showActionResult(payload, "Открываю локальный PWA-чат. Если окно не открылось, запусти local-chat/server.py и открой URL из payload.");
+      window.open(url, "_blank", "noopener,noreferrer");
+      toast("Открываю локальный чат");
     }
 
     function secretProtocolText() {
@@ -1409,6 +1491,7 @@
       if (isTelegram() && tg?.sendData) {
         try {
           tg.sendData(text);
+          showActionResult(payload, "Payload отправлен через Telegram WebApp.");
           toast(toastMessage || "Отправлено в Telegram WebApp-контур");
           return true;
         } catch (error) {
@@ -1416,6 +1499,7 @@
         }
       }
       await copyText(text);
+      showActionResult(payload, "Telegram WebApp недоступен: JSON-намерение скопировано в буфер для ручной вставки.");
       toast("JSON-намерение скопировано. Его можно вставить в чат Hermes.");
       return false;
     }
@@ -1432,6 +1516,7 @@
     async function copyCommand(item) {
       await copyText(item.command);
       try { tg?.HapticFeedback?.selectionChanged(); } catch {}
+      showActionResult({ type: "copied_command", id: item.id, command: item.command, ts: new Date().toISOString() }, "Команда скопирована как обычный текст.");
       toast(`Скопировано: ${item.title}`);
     }
 
@@ -1531,6 +1616,11 @@
     });
     $("statusBtn").onclick = () => copyCommand(commands.find((item) => item.id === "status"));
     $("secretJumpBtn").onclick = scrollToSecret;
+    $("localChatBtn").onclick = openLocalChat;
+    $("resultCopyBtn").onclick = async () => {
+      await copyText(lastPayloadText || "");
+      toast(lastPayloadText ? "Последний JSON скопирован" : "Пока нечего копировать");
+    };
     $("tgBtn").onclick = () => {
       bootTelegram();
       toast(isTelegram() ? "Telegram WebApp активен" : "Локальный режим предпросмотра");

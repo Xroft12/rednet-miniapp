@@ -1,0 +1,19 @@
+{
+  "name": "Айрин Локальный Чат",
+  "short_name": "Айрин Чат",
+  "description": "Мобильный PWA-канал локальной резервной связи с Айрин.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#f5f5f7",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "../icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

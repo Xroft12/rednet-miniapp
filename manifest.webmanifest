@@ -1,11 +1,19 @@
 {
   "name": "Айрин RedNET MiniApp",
   "short_name": "RedNET",
-  "description": "Fast Hermes/RedNET command launcher for Telegram Mini Apps",
+  "description": "Быстрый Hermes/RedNET пульт команд для Telegram Mini Apps",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#07080a",
   "theme_color": "#7170ff",
-  "icons": []
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }

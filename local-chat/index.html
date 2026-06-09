@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#f5f5f7" />
+  <title>Айрин | Локальный чат</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <style>
+    :root {
+      --page: #f5f5f7;
+      --card: rgba(255,255,255,.86);
+      --solid: #fff;
+      --line: rgba(60,60,67,.16);
+      --text: #1d1d1f;
+      --muted: #6e6e73;
+      --blue: #007aff;
+      --green: #34c759;
+      --red: #ff3b30;
+      --yellow: #ffcc00;
+      --shadow: 0 18px 48px rgba(0,0,0,.12);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; background: var(--page); color: var(--text); }
+    body {
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 50% -12%, rgba(0,122,255,.16), transparent 22rem),
+        linear-gradient(180deg, #fbfbfd, #f5f5f7 52%, #ececf1);
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { border: 0; color: inherit; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+
+    .app {
+      width: min(430px, 100%);
+      min-height: 100dvh;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+      gap: 10px;
+      padding: calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom));
+    }
+    .glass {
+      border: 1px solid var(--line);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px) saturate(1.25);
+    }
+    .top {
+      position: sticky;
+      top: calc(8px + env(safe-area-inset-top));
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 62px;
+      padding: 10px;
+      border-radius: 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .avatar {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      color: #fff;
+      background: linear-gradient(145deg, #4da3ff, #8e8cff 58%, #5dd6a7);
+      font-weight: 800;
+    }
+    .brand strong, .brand small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .brand strong { font-size: 16px; }
+    .brand small { margin-top: 2px; color: var(--muted); font-size: 12px; }
+    .small-btn {
+      min-width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: rgba(118,118,128,.12);
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    .status {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .tile {
+      min-height: 64px;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.74);
+      border: 1px solid var(--line);
+    }
+    .tile small { display: block; color: var(--muted); font-size: 11px; }
+    .tile strong { display: block; margin-top: 5px; font-size: 15px; overflow-wrap: anywhere; }
+    .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 6px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 5px rgba(52,199,89,.12);
+    }
+    .dot.off { background: var(--red); box-shadow: 0 0 0 5px rgba(255,59,48,.12); }
+    .dot.warn { background: var(--yellow); box-shadow: 0 0 0 5px rgba(255,204,0,.14); }
+
+    .quick {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .quick button {
+      min-height: 64px;
+      display: grid;
+      place-items: center;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.78);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .quick button b {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: rgba(0,122,255,.1);
+      color: var(--blue);
+    }
+    .quick .primary { background: var(--blue); color: #fff; }
+    .quick .primary b { background: rgba(255,255,255,.22); color: #fff; }
+
+    .notice {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.78);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      overflow-wrap: anywhere;
+      font-size: 13px;
+    }
+    .notice.ok { color: #1a7f37; background: rgba(52,199,89,.12); }
+    .notice.warn { color: #946200; background: rgba(255,204,0,.16); }
+    .notice.error { color: #b42318; background: rgba(255,59,48,.12); }
+
+    .chat {
+      min-height: 0;
+      display: grid;
+      border-radius: 28px;
+      overflow: hidden;
+    }
+    .messages {
+      min-height: 0;
+      overflow: auto;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .message {
+      max-width: 86%;
+      padding: 9px 12px;
+      border-radius: 20px;
+      line-height: 1.38;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 15px;
+    }
+    .message.ivan { align-self: flex-end; color: #fff; background: var(--blue); border-bottom-right-radius: 7px; }
+    .message.airin { align-self: flex-start; color: var(--text); background: #e9e9ee; border-bottom-left-radius: 7px; }
+    .meta { margin-bottom: 3px; color: rgba(255,255,255,.72); font-size: 10px; }
+    .message.airin .meta { color: #8e8e93; }
+
+    .composer {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 44px;
+      gap: 8px;
+      padding: 8px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid var(--line);
+      box-shadow: 0 14px 44px rgba(0,0,0,.1);
+    }
+    textarea {
+      width: 100%;
+      min-height: 44px;
+      max-height: 132px;
+      resize: none;
+      border: 1px solid transparent;
+      border-radius: 18px;
+      padding: 11px 12px;
+      outline: 0;
+      background: rgba(118,118,128,.12);
+      color: var(--text);
+      line-height: 1.35;
+    }
+    textarea:focus { border-color: rgba(0,122,255,.32); box-shadow: 0 0 0 4px rgba(0,122,255,.1); }
+    .send {
+      width: 44px;
+      min-height: 44px;
+      border-radius: 18px;
+      background: var(--blue);
+      color: white;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .sheet {
+      position: fixed;
+      left: 50%;
+      bottom: calc(76px + env(safe-area-inset-bottom));
+      z-index: 40;
+      width: min(410px, calc(100vw - 20px));
+      max-height: min(76dvh, 660px);
+      overflow: auto;
+      padding: 14px;
+      border-radius: 28px;
+      transform: translateX(-50%) translateY(18px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .18s ease;
+    }
+    .sheet.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+    .sheet h2 { margin: 0 0 8px; font-size: 18px; }
+    .sheet p { margin: 0 0 12px; color: var(--muted); line-height: 1.45; }
+    .sheet-grid { display: grid; gap: 8px; }
+    .wide {
+      min-height: 44px;
+      border-radius: 16px;
+      background: rgba(118,118,128,.12);
+      font-weight: 700;
+      padding: 0 12px;
+    }
+    .wide.blue { background: var(--blue); color: #fff; }
+    .wide.red { background: rgba(255,59,48,.1); color: var(--red); }
+    .field { display: grid; gap: 6px; }
+    .field label { color: var(--muted); font-size: 12px; }
+    .input {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 0 12px;
+      outline: 0;
+      background: rgba(118,118,128,.1);
+      color: var(--text);
+    }
+    .row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); color: var(--muted); }
+    .row strong { color: var(--text); text-align: right; }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      z-index: 90;
+      max-width: min(390px, calc(100vw - 20px));
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(29,29,31,.88);
+      color: white;
+      box-shadow: 0 14px 44px rgba(0,0,0,.18);
+      transform: translateX(-50%) translateY(18px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .18s ease;
+      text-align: center;
+      font-size: 13px;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    @media (max-width: 370px) {
+      .status { grid-template-columns: 1fr; }
+      .quick { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .app { padding-left: 8px; padding-right: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="top glass">
+      <div class="brand">
+        <span class="avatar">A</span>
+        <span>
+          <strong>Айрин</strong>
+          <small id="connectionLabel">проверка локального канала</small>
+        </span>
+      </div>
+      <button class="small-btn" id="adminBtn" type="button" title="Оператор">⚙</button>
+    </header>
+
+    <section class="status">
+      <div class="tile"><small>сервис</small><strong><span id="liveDot" class="dot warn"></span><span id="liveText">проверка</span></strong></div>
+      <div class="tile"><small>очередь</small><strong id="queueText">0</strong></div>
+      <div class="tile"><small>режим</small><strong id="modeText">local</strong></div>
+    </section>
+
+    <section class="quick">
+      <button class="primary" id="callBtn" type="button"><b>↗</b>Позвать</button>
+      <button id="refreshBtn" type="button"><b>↻</b>Статус</button>
+      <button id="exportsBtn" type="button"><b>⇩</b>Выгрузки</button>
+      <button id="holdBtn" type="button"><b>Ⅱ</b>Hold</button>
+    </section>
+
+    <div class="notice" id="notice">Готово. Базовые кнопки работают без входа; вход нужен только для админских действий.</div>
+
+    <section class="chat glass">
+      <div class="messages" id="messages"></div>
+    </section>
+
+    <form class="composer" id="chatForm">
+      <textarea id="messageText" placeholder="Написать Айрин локально..." autocomplete="off"></textarea>
+      <button class="send" id="sendBtn" type="submit">↑</button>
+    </form>
+  </main>
+
+  <section class="sheet glass" id="sheet">
+    <h2>Оператор</h2>
+    <p>Локальный вход защищает только админские кнопки этой PWA. Он не меняет Hermes, Айрин и Telegram.</p>
+    <div class="sheet-grid">
+      <button class="wide" data-export="history" type="button">Скопировать историю чата</button>
+      <button class="wide" data-export="status" type="button">Скопировать статус</button>
+      <button class="wide blue" data-export="raw-thread" type="button">Запросить сырую нить</button>
+      <div class="row"><span>оператор</span><strong id="operatorText">нет</strong></div>
+      <div class="row"><span>админов</span><strong id="adminCountText">0</strong></div>
+      <form class="sheet-grid" id="loginForm" autocomplete="off">
+        <div class="field">
+          <label for="loginName">Логин</label>
+          <input class="input" id="loginName" autocomplete="username" value="ivan" />
+        </div>
+        <div class="field">
+          <label for="loginPassword">Пароль</label>
+          <input class="input" id="loginPassword" type="password" autocomplete="current-password" />
+        </div>
+        <button class="wide blue" id="loginSubmitBtn" type="submit">Войти</button>
+      </form>
+      <button class="wide" id="loginPasskeyBtn" type="button">FaceID / TouchID</button>
+      <button class="wide" id="adminWizardBtn" type="button">Мастер администраторов</button>
+      <button class="wide red" id="resetLoginBtn" type="button">Сбросить локальный вход</button>
+      <button class="wide" id="closeSheetBtn" type="button">Закрыть</button>
+    </div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const DEFAULT_API = localStorage.getItem("rednetLocalChatApi") || location.origin;
+    const store = {
+      admins: "rednetLocalChatAdmins",
+      session: "rednetLocalChatSession",
+      passkey: "rednetLocalChatPasskey",
+      transcript: "rednetLocalChatTranscript"
+    };
+    const $ = (id) => document.getElementById(id);
+    const state = {
+      api: DEFAULT_API.replace(/\/$/, ""),
+      status: null,
+      history: [],
+      queue: [],
+      operator: null
+    };
+
+    function toast(message) {
+      $("toast").textContent = message;
+      $("toast").classList.add("show");
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => $("toast").classList.remove("show"), 2300);
+    }
+
+    function setNotice(text, kind = "") {
+      $("notice").textContent = text;
+      $("notice").className = "notice" + (kind ? " " + kind : "");
+    }
+
+    async function digest(text) {
+      const data = new TextEncoder().encode(text);
+      const hash = await crypto.subtle.digest("SHA-256", data);
+      return [...new Uint8Array(hash)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    function admins() {
+      return JSON.parse(localStorage.getItem(store.admins) || "[]");
+    }
+
+    function saveAdmins(items) {
+      localStorage.setItem(store.admins, JSON.stringify(items));
+      renderAuth();
+    }
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char]));
+    }
+
+    function formatTime(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "";
+      return date.toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+    }
+
+    async function api(path, options = {}) {
+      const response = await fetch(state.api + path, {
+        headers: { "Content-Type": "application/json" },
+        ...options
+      });
+      if (!response.ok) throw new Error(await response.text());
+      return response.json();
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        const area = document.createElement("textarea");
+        area.value = text;
+        area.style.position = "fixed";
+        area.style.opacity = "0";
+        document.body.appendChild(area);
+        area.select();
+        const ok = document.execCommand("copy");
+        area.remove();
+        return ok;
+      }
+    }
+
+    function renderAuth() {
+      const saved = sessionStorage.getItem(store.session);
+      state.operator = saved ? JSON.parse(saved) : null;
+      $("operatorText").textContent = state.operator?.login || "нет";
+      $("adminCountText").textContent = String(admins().length);
+      $("loginSubmitBtn").textContent = admins().length ? "Войти" : "Создать и войти";
+    }
+
+    function renderStatus() {
+      const live = Boolean(state.status?.ok || state.status?.enabled);
+      $("liveText").textContent = live ? "работает" : "нет связи";
+      $("liveDot").className = "dot" + (live ? "" : " off");
+      $("connectionLabel").textContent = live ? "резервный канал активен" : "резервный канал недоступен";
+      const queueTotal = state.status?.queue ? Object.values(state.status.queue).reduce((a, b) => a + Number(b || 0), 0) : state.queue.length;
+      $("queueText").textContent = String(queueTotal);
+      $("modeText").textContent = state.status?.hot_off ? "hold" : (state.status?.mode || "local");
+    }
+
+    function renderMessages() {
+      const el = $("messages");
+      if (!state.history.length) {
+        el.innerHTML = `<div class="message airin"><div class="meta">Айрин · локально</div>Я здесь как резервный канал. Нажми “Позвать” или напиши сообщение.</div>`;
+        return;
+      }
+      el.innerHTML = state.history.map((item) => {
+        const sender = item.sender === "ivan" ? "ivan" : "airin";
+        const name = sender === "ivan" ? "Иван" : "Айрин";
+        return `<div class="message ${sender}"><div class="meta">${name} · ${escapeHtml(formatTime(item.created_at))}</div>${escapeHtml(item.text)}</div>`;
+      }).join("");
+      el.scrollTop = el.scrollHeight;
+      localStorage.setItem(store.transcript, JSON.stringify(state.history.slice(-100)));
+    }
+
+    async function refresh() {
+      try {
+        state.status = await api("/health");
+        try { state.status = { ...state.status, ...(await api("/api/status")) }; } catch {}
+        try { state.history = (await api("/api/history?conversation_id=local-default&limit=100")).items || []; } catch {
+          state.history = JSON.parse(localStorage.getItem(store.transcript) || "[]");
+        }
+        try { state.queue = (await api("/api/queue")).items || []; } catch { state.queue = []; }
+        setNotice("Статус обновлён. Локальный канал отвечает.", "ok");
+      } catch (error) {
+        state.status = { ok: false, enabled: false, mode: "offline", queue: {} };
+        state.history = JSON.parse(localStorage.getItem(store.transcript) || "[]");
+        setNotice("Локальный сервис недоступен. Fallback будет копировать команды в буфер.", "error");
+      }
+      renderStatus();
+      renderMessages();
+    }
+
+    async function sendLocal(text) {
+      const trimmed = text.trim();
+      if (!trimmed) return;
+      $("sendBtn").disabled = true;
+      try {
+        await api("/api/chat", { method: "POST", body: JSON.stringify({ conversation_id: "local-default", text: trimmed }) });
+        $("messageText").value = "";
+        setNotice("Сообщение отправлено в локальный канал.", "ok");
+        toast("Отправлено");
+        await refresh();
+      } catch {
+        await copyText(`Локальное сообщение для Айрин:\n${trimmed}`);
+        state.history.push({ sender: "ivan", text: trimmed, created_at: new Date().toISOString() });
+        state.history.push({ sender: "airin", text: "AJAX не прошёл. Текст скопирован в буфер как fallback.", created_at: new Date().toISOString() });
+        renderMessages();
+        setNotice("AJAX не прошёл. Текст скопирован в буфер.", "warn");
+        toast("Fallback скопирован");
+      } finally {
+        $("sendBtn").disabled = false;
+        $("messageText").focus();
+      }
+    }
+
+    function showSheet() {
+      $("sheet").classList.add("show");
+    }
+
+    function hideSheet() {
+      $("sheet").classList.remove("show");
+    }
+
+    async function callAirin() {
+      await sendLocal("Айрин, это локальный резервный канал. Отзовись коротко и скажи, видишь ли меня здесь.");
+    }
+
+    async function toggleHold() {
+      if (!state.operator) {
+        showSheet();
+        setNotice("Для Hold нужен локальный вход оператора.", "warn");
+        return;
+      }
+      const enabled = !state.status?.hot_off;
+      try {
+        await api("/api/hotoff", { method: "POST", body: JSON.stringify({ enabled, reason: enabled ? "включено из PWA локального чата" : "выключено из PWA локального чата" }) });
+        setNotice(enabled ? "Hold включён." : "Hold выключен.", "ok");
+      } catch {
+        await copyText(`Айрин, ${enabled ? "включи" : "выключи"} режим удержания локального канала. Причина: управление из PWA.`);
+        setNotice("Команда Hold скопирована как fallback.", "warn");
+      }
+      await refresh();
+    }
+
+    async function exportData(kind) {
+      if (kind === "history") {
+        await copyText(JSON.stringify(state.history, null, 2));
+        setNotice("История скопирована в буфер.", "ok");
+      } else if (kind === "status") {
+        await copyText(JSON.stringify(state.status, null, 2));
+        setNotice("Статус скопирован в буфер.", "ok");
+      } else {
+        await sendLocal("Айрин, подготовь выгрузку сырой нити локального чата и дай путь к файлу.");
+        setNotice("Запрос выгрузки отправлен в чат.", "ok");
+      }
+    }
+
+    async function login(loginName, password) {
+      if (!loginName || !password) throw new Error("Нужны логин и пароль.");
+      const list = admins();
+      const passwordHash = await digest(`${loginName}:${password}`);
+      if (!list.length) {
+        list.push({ login: loginName, passwordHash, role: "owner", createdAt: new Date().toISOString() });
+        localStorage.setItem(store.admins, JSON.stringify(list));
+      }
+      const match = list.find((item) => item.login === loginName && item.passwordHash === passwordHash);
+      if (!match) throw new Error("Логин или пароль не подошли.");
+      sessionStorage.setItem(store.session, JSON.stringify({ login: loginName, role: match.role, ts: new Date().toISOString() }));
+      renderAuth();
+      setNotice("Локальный оператор вошёл.", "ok");
+      toast("Вход выполнен");
+    }
+
+    async function createAdmin() {
+      if (!state.operator) {
+        setNotice("Сначала войди локальным оператором.", "warn");
+        return;
+      }
+      const loginName = prompt("Логин нового админа");
+      if (!loginName) return;
+      const password = prompt("Временный пароль нового админа");
+      if (!password) return;
+      const list = admins();
+      if (list.some((item) => item.login === loginName)) {
+        alert("Такой админ уже есть");
+        return;
+      }
+      list.push({ login: loginName, passwordHash: await digest(`${loginName}:${password}`), role: "admin", createdAt: new Date().toISOString() });
+      saveAdmins(list);
+      setNotice("Админ создан локально. Передай временный пароль отдельным каналом.", "ok");
+    }
+
+    function passkeyLogin() {
+      const saved = JSON.parse(localStorage.getItem(store.passkey) || "null");
+      if (!saved?.enabled) {
+        setNotice("FaceID / TouchID пока не включён. Сначала войди паролем.", "warn");
+        return;
+      }
+      sessionStorage.setItem(store.session, JSON.stringify({ login: saved.login, role: "admin", ts: new Date().toISOString(), passkey: true }));
+      renderAuth();
+      setNotice("Быстрый вход выполнен.", "ok");
+    }
+
+    function enablePasskey() {
+      if (!state.operator) {
+        setNotice("Сначала войди паролем, потом включай быстрый вход.", "warn");
+        return;
+      }
+      localStorage.setItem(store.passkey, JSON.stringify({ login: state.operator.login, enabled: true, ts: new Date().toISOString() }));
+      setNotice("Быстрый вход отмечен локально. Полная WebAuthn-проверка будет серверным этапом.", "ok");
+    }
+
+    function resetLocalLogin() {
+      const ok = confirm("Сбросить только локальный вход этой PWA? Чат, Айрин и Hermes не будут затронуты.");
+      if (!ok) return;
+      localStorage.removeItem(store.admins);
+      localStorage.removeItem(store.passkey);
+      sessionStorage.removeItem(store.session);
+      $("loginPassword").value = "";
+      renderAuth();
+      setNotice("Локальный вход сброшен. Введи новый пароль и нажми “Создать и войти”.", "ok");
+    }
+
+    $("chatForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      sendLocal($("messageText").value);
+    });
+    $("messageText").addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        $("chatForm").requestSubmit();
+      }
+    });
+    $("callBtn").addEventListener("click", callAirin);
+    $("refreshBtn").addEventListener("click", () => refresh().then(() => toast("Статус обновлён")));
+    $("exportsBtn").addEventListener("click", showSheet);
+    $("holdBtn").addEventListener("click", toggleHold);
+    $("adminBtn").addEventListener("click", showSheet);
+    $("closeSheetBtn").addEventListener("click", hideSheet);
+    $("adminWizardBtn").addEventListener("click", createAdmin);
+    $("loginPasskeyBtn").addEventListener("click", passkeyLogin);
+    $("resetLoginBtn").addEventListener("click", resetLocalLogin);
+    document.querySelectorAll("[data-export]").forEach((button) => button.addEventListener("click", () => exportData(button.dataset.export)));
+    $("loginForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      try {
+        await login($("loginName").value.trim(), $("loginPassword").value);
+      } catch (error) {
+        setNotice(error.message, "error");
+      }
+    });
+    $("loginSubmitBtn").addEventListener("dblclick", enablePasskey);
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    }
+    renderAuth();
+    refresh();
+    setInterval(refresh, 6000);
+  </script>
+</body>
+</html>
