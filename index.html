@@ -3,84 +3,1541 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#07080a" />
-  <title>Айрин ♥ RedNET MiniApp</title>
-  <script>window.__rednetErrors=[];addEventListener('error',e=>window.__rednetErrors.push({message:e.message,source:e.filename,line:e.lineno,col:e.colno}));addEventListener('unhandledrejection',e=>window.__rednetErrors.push({message:String(e.reason),source:'promise'}));</script>
+  <meta name="theme-color" content="#090b0f" />
+  <title>Айрин | RedNET MiniApp</title>
+  <script>
+    window.__rednetErrors = [];
+    addEventListener("error", (event) => window.__rednetErrors.push({
+      message: event.message,
+      source: event.filename,
+      line: event.lineno,
+      col: event.colno
+    }));
+    addEventListener("unhandledrejection", (event) => window.__rednetErrors.push({
+      message: String(event.reason),
+      source: "promise"
+    }));
+  </script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#07080a;--panel:rgba(16,17,20,.78);--panel2:rgba(25,26,31,.74);--surface:rgba(255,255,255,.05);--surface2:rgba(255,255,255,.08);--text:#f7f8f8;--muted:#9ca3af;--soft:#62666d;--border:rgba(255,255,255,.085);--accent:#7170ff;--red:#ff6363;--green:#10b981;--yellow:#fbbf24;--shadow:0 24px 80px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.055);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark}*{box-sizing:border-box}html{background:var(--bg)}body{min-height:100vh;margin:0;color:var(--text);background:radial-gradient(circle at 18% -12%,rgba(113,112,255,.28),transparent 34rem),radial-gradient(circle at 95% 0,rgba(255,99,99,.18),transparent 28rem),linear-gradient(180deg,#07080a,#080a0f 45%,#06070a);font-feature-settings:"cv01","ss03";-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer;color:inherit}.shell{width:min(1180px,100%);margin:0 auto;padding:16px 16px 104px}.glass{background:var(--panel);border:1px solid var(--border);box-shadow:var(--shadow);backdrop-filter:blur(24px) saturate(1.24)}.top{position:sticky;top:calc(8px + env(safe-area-inset-top));z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:10px 12px;border-radius:20px}.brand{display:flex;align-items:center;gap:11px;background:transparent;border:0;padding:0;text-align:left}.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;color:white;background:linear-gradient(135deg,#7170ff,#ff6363);box-shadow:0 14px 36px rgba(113,112,255,.28),inset 0 1px 0 rgba(255,255,255,.28)}.brand strong{display:block;font-size:16px}.brand small{display:block;color:var(--muted);font-size:12px;margin-top:2px}.topActions{display:flex;gap:8px}.pill,.cta,.primary,.secondary,.chip,.send,.copy,.fav{border:1px solid var(--border);background:rgba(255,255,255,.045);border-radius:999px;transition:.18s ease}.pill{width:40px;height:40px;display:grid;place-items:center;font-size:18px}.cta{padding:10px 13px;font-family:"JetBrains Mono",monospace}button:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18)}button:active{transform:translateY(0) scale(.985)}.hero{margin-top:16px;border-radius:30px;padding:clamp(20px,5vw,44px);display:grid;grid-template-columns:1.28fr .72fr;gap:28px;overflow:hidden;position:relative}.hero:before{content:"";position:absolute;inset:-1px;pointer-events:none;background:radial-gradient(circle at 76% 20%,rgba(113,112,255,.22),transparent 22rem),linear-gradient(135deg,rgba(255,255,255,.06),transparent 40%)}.hero>*{position:relative}.eyebrow{display:inline-flex;align-items:center;gap:8px;color:#cbd5e1;font-size:13px;letter-spacing:.2px;margin-bottom:18px;padding:7px 10px;border:1px solid rgba(255,255,255,.045);border-radius:999px;background:rgba(255,255,255,.035)}.pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(16,185,129,.7);animation:pulse 1.8s infinite}@keyframes pulse{70%{box-shadow:0 0 0 12px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}h1{margin:0;font-size:clamp(36px,8vw,72px);line-height:.98;letter-spacing:-1.5px;font-weight:650;max-width:820px}.hero p{margin:20px 0 0;max-width:690px;color:#b6bdc9;font-size:clamp(16px,2.3vw,19px);line-height:1.65}.heroBtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}.primary{border:0;background:linear-gradient(135deg,#7170ff,#8b5cf6 52%,#ff6363);color:white;padding:13px 18px;font-weight:700;box-shadow:0 14px 40px rgba(113,112,255,.32)}.secondary{padding:12px 16px;color:#d6d9e3}.signal{align-self:stretch;min-height:280px;padding:18px;border-radius:26px;background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));border:1px solid var(--border);display:flex;flex-direction:column;justify-content:space-between}.orb{flex:1;display:grid;place-items:center;min-height:138px}.orb span{width:128px;height:128px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#a5b4fc 22%,#7170ff 46%,#ff6363 72%,transparent 73%);filter:drop-shadow(0 0 42px rgba(113,112,255,.42));position:relative}.orb span:after{content:"";position:absolute;inset:18px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:radial-gradient(circle,rgba(7,8,10,.4),rgba(7,8,10,.9))}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.metrics div{padding:12px;border-radius:16px;background:rgba(7,8,10,.48);border:1px solid rgba(255,255,255,.045)}.metrics small{display:block;color:var(--soft);font-size:11px;margin-bottom:3px}.metrics strong{font-size:20px}.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}.qcard{min-height:126px;border-radius:22px;padding:16px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));box-shadow:inset 0 1px 0 rgba(255,255,255,.055);display:flex;flex-direction:column;justify-content:space-between;text-align:left}.qicon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:rgba(113,112,255,.17);color:#c4b5fd;border:1px solid rgba(113,112,255,.22)}.qcard strong{font-size:16px}.qcard small{color:var(--muted);line-height:1.35}.work{display:grid;grid-template-columns:250px minmax(0,1fr);gap:14px;margin-top:16px;align-items:start}.side,.commands{border-radius:26px;padding:14px}.side{position:sticky;top:94px}.title{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 12px}.title span{font-weight:700}.title small{color:var(--soft)}.cats{display:grid;gap:6px}.cat{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px;border:1px solid transparent;background:transparent;color:#aeb6c5;border-radius:14px;text-align:left}.cat.active,.cat:hover{background:rgba(255,255,255,.055);border-color:var(--border);color:var(--text)}.cat small{color:var(--soft)}.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;position:sticky;top:94px;z-index:10;padding-bottom:8px;background:linear-gradient(180deg,rgba(16,17,20,.94),rgba(16,17,20,.72));backdrop-filter:blur(16px)}.search{flex:1;display:flex;align-items:center;gap:9px;min-width:0;padding:10px 12px;border-radius:16px;border:1px solid var(--border);background:rgba(7,8,10,.46)}.search span{color:var(--soft);font-size:18px}.search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--text);font-size:15px}.search input::placeholder{color:#606672}kbd{font-family:"JetBrains Mono",monospace;font-size:11px;color:#cbd5e1;padding:4px 7px;border-radius:7px;background:linear-gradient(180deg,#17181d,#0b0c10);border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 2px 10px rgba(0,0,0,.3)}.chip{padding:10px 12px;color:#cbd5e1}.chip.active{background:rgba(113,112,255,.18);color:#fff;border-color:rgba(113,112,255,.38)}.list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{position:relative;border:1px solid var(--border);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.026));padding:14px;min-height:214px;display:flex;flex-direction:column;gap:12px;overflow:hidden}.card:after{content:"";position:absolute;inset:auto -20% -35% 40%;height:100px;background:radial-gradient(circle,rgba(113,112,255,.09),transparent 68%);pointer-events:none}.fav{position:absolute;top:12px;right:12px;z-index:1;width:34px;height:34px;border-radius:12px;background:rgba(7,8,10,.4);color:#cbd5e1}.fav.active{color:var(--yellow);border-color:rgba(251,191,36,.32);background:rgba(251,191,36,.1)}.head{display:flex;gap:10px;align-items:center;padding-right:38px}.icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.045);font-size:20px}.card h3{margin:0;font-size:16px}.card small{display:block;color:var(--soft);margin-top:3px;font-family:"JetBrains Mono",monospace;font-size:11px}.card p{margin:0;color:#aeb6c5;line-height:1.5;font-size:14px}.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}.tag{font-size:11px;color:#cbd5e1;border:1px solid rgba(255,255,255,.045);background:rgba(255,255,255,.038);border-radius:999px;padding:4px 7px}.tag.safe{color:#a7f3d0;border-color:rgba(16,185,129,.24);background:rgba(16,185,129,.08)}.tag.warn{color:#fde68a;border-color:rgba(251,191,36,.24);background:rgba(251,191,36,.08)}.actions{display:flex;gap:8px;position:relative;z-index:1}.send{flex:1;padding:10px 12px;background:rgba(113,112,255,.20);border-color:rgba(113,112,255,.34);font-weight:700}.copy{padding:10px 12px;color:#cbd5e1}.palette{width:min(720px,calc(100% - 20px));border:0;padding:0;background:transparent;color:var(--text)}.palette::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(12px)}.pshell{border-radius:26px;padding:14px}.phead{display:flex;align-items:center;justify-content:space-between;padding:2px 2px 12px}.results{display:grid;gap:8px;max-height:min(58vh,520px);overflow:auto;padding-right:2px}.row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px;border-radius:16px;border:1px solid transparent;background:rgba(255,255,255,.035);text-align:left}.row:hover{border-color:var(--border);background:rgba(255,255,255,.065)}.row .icon{width:34px;height:34px;border-radius:11px;font-size:16px}.row strong{display:block;font-size:14px}.row small{color:var(--soft);font-family:"JetBrains Mono",monospace;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bottom{position:fixed;left:max(10px,env(safe-area-inset-left));right:max(10px,env(safe-area-inset-right));bottom:calc(10px + env(safe-area-inset-bottom));z-index:30;display:none;justify-content:space-around;padding:8px;border-radius:24px}.bottom button{border:0;background:transparent;color:#8a93a3;border-radius:16px;padding:8px 13px;display:grid;gap:2px;place-items:center;min-width:64px}.bottom button span{font-size:11px}.bottom button.active{color:white;background:rgba(113,112,255,.18)}.toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));z-index:99;transform:translateX(-50%) translateY(20px);opacity:0;padding:11px 14px;max-width:min(92vw,520px);border-radius:999px;background:rgba(15,16,17,.94);border:1px solid var(--border);box-shadow:var(--shadow);color:#e5e7eb;transition:.18s ease;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}@media(max-width:940px){.hero{grid-template-columns:1fr}.signal{min-height:220px}.quick{grid-template-columns:repeat(2,minmax(0,1fr))}.work{grid-template-columns:1fr}.side{position:static}.cats{grid-template-columns:repeat(2,minmax(0,1fr))}.toolbar{top:86px}}@media(max-width:680px){.shell{padding:10px 10px 104px}.top{min-height:58px;border-radius:18px}.mark{width:38px;height:38px}.cta{display:none}.hero{border-radius:24px;padding:22px 16px}h1{letter-spacing:-1px}.quick,.list{grid-template-columns:1fr}.cats{display:flex;overflow-x:auto;padding-bottom:4px}.cat{min-width:136px}.toolbar{position:static;flex-wrap:wrap}.chip{flex:1}.search{flex-basis:100%}.bottom{display:flex}}
+    :root {
+      --bg: #090b0f;
+      --bg-2: #0e1118;
+      --panel: rgba(18, 22, 30, .82);
+      --panel-2: rgba(26, 31, 42, .76);
+      --panel-3: rgba(255, 255, 255, .055);
+      --line: rgba(255, 255, 255, .095);
+      --line-2: rgba(255, 255, 255, .15);
+      --text: #f7f8fb;
+      --muted: #a5afbf;
+      --faint: #687386;
+      --blue: #52a8ff;
+      --violet: #8b7cff;
+      --green: #2dd4bf;
+      --yellow: #f8c14a;
+      --red: #ff6b6b;
+      --shadow: 0 24px 90px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 255, 255, .055);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--bg); }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 12% -10%, rgba(82, 168, 255, .24), transparent 34rem),
+        radial-gradient(circle at 88% 0, rgba(45, 212, 191, .16), transparent 26rem),
+        linear-gradient(180deg, #090b0f 0%, #0c1018 46%, #07090d 100%);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { color: inherit; cursor: pointer; }
+    input, select, textarea { color: var(--text); }
+
+    .shell {
+      width: min(1240px, 100%);
+      margin: 0 auto;
+      padding: 14px 14px 108px;
+    }
+
+    .glass {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px) saturate(1.18);
+    }
+
+    .top {
+      position: sticky;
+      top: calc(8px + env(safe-area-inset-top));
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 66px;
+      padding: 10px 12px;
+      border-radius: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      text-align: left;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      border-radius: 16px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), var(--violet) 54%, var(--green));
+      box-shadow: 0 16px 42px rgba(82, 168, 255, .28), inset 0 1px 0 rgba(255, 255, 255, .28);
+    }
+
+    .brand strong, .brand small {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .brand strong { font-size: 16px; }
+    .brand small { margin-top: 2px; color: var(--muted); font-size: 12px; }
+
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .icon-button, .text-button, .primary, .secondary, .chip, .send, .copy, .favorite {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .045);
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .icon-button {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      font-size: 18px;
+    }
+
+    .text-button {
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 999px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      color: #d7deea;
+    }
+
+    button:hover { transform: translateY(-1px); border-color: var(--line-2); }
+    button:active { transform: translateY(0) scale(.985); }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+      gap: 22px;
+      margin-top: 14px;
+      padding: clamp(20px, 4.8vw, 42px);
+      border-radius: 30px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 76% 18%, rgba(82, 168, 255, .22), transparent 22rem),
+        linear-gradient(135deg, rgba(255, 255, 255, .07), transparent 46%);
+    }
+
+    .hero > * { position: relative; }
+    .hero > div, .status-panel, .admin-card, .commands, .side { min-width: 0; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 100%;
+      margin-bottom: 18px;
+      padding: 7px 10px;
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .04);
+      color: #ced8e8;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 0 rgba(45, 212, 191, .68);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      70% { box-shadow: 0 0 0 12px rgba(45, 212, 191, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(45, 212, 191, 0); }
+    }
+
+    h1 {
+      max-width: min(820px, 100%);
+      margin: 0;
+      font-size: 58px;
+      line-height: .98;
+      letter-spacing: 0;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 20px 0 0;
+      color: #bac4d4;
+      font-size: 17px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+
+    .hero-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+    .primary, .secondary {
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .primary {
+      border: 0;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), var(--violet) 55%, var(--green));
+      box-shadow: 0 14px 42px rgba(82, 168, 255, .28);
+    }
+
+    .secondary { color: #dbe4f3; }
+
+    .status-panel {
+      display: grid;
+      gap: 12px;
+      align-self: stretch;
+      min-height: 280px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .028));
+    }
+
+    .radar {
+      display: grid;
+      place-items: center;
+      min-height: 130px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle, rgba(82, 168, 255, .18), transparent 44%),
+        linear-gradient(135deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .02));
+      border: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .radar span {
+      position: relative;
+      width: 116px;
+      height: 116px;
+      border-radius: 50%;
+      background: conic-gradient(from 140deg, var(--green), var(--blue), var(--violet), var(--green));
+      filter: drop-shadow(0 0 34px rgba(82, 168, 255, .36));
+    }
+
+    .radar span::before, .radar span::after {
+      content: "";
+      position: absolute;
+      inset: 15px;
+      border-radius: 50%;
+      background: #0d1119;
+      border: 1px solid rgba(255, 255, 255, .24);
+    }
+
+    .radar span::after {
+      inset: 42px;
+      background: var(--green);
+      box-shadow: 0 0 24px rgba(45, 212, 191, .6);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      min-height: 72px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 18px;
+      background: rgba(7, 9, 13, .46);
+    }
+
+    .metric small { display: block; margin-bottom: 5px; color: var(--faint); font-size: 11px; }
+    .metric strong { display: block; font-size: 21px; }
+
+    .quick {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .quick-card {
+      min-height: 128px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .025));
+      text-align: left;
+    }
+
+    .quick-icon, .card-icon, .agent-mark {
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, .07);
+      background: rgba(255, 255, 255, .055);
+    }
+
+    .quick-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      color: #bfe3ff;
+    }
+
+    .quick-card strong { font-size: 16px; }
+    .quick-card small { color: var(--muted); line-height: 1.35; }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(320px, 1.05fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .admin-card {
+      padding: 16px;
+      border-radius: 26px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-head h2, .section-head h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .section-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, .08);
+      background: rgba(255, 255, 255, .045);
+      color: #dce6f4;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .badge.safe { color: #b7f7e8; border-color: rgba(45, 212, 191, .24); background: rgba(45, 212, 191, .08); }
+    .badge.warn { color: #ffe2a0; border-color: rgba(248, 193, 74, .26); background: rgba(248, 193, 74, .08); }
+    .badge.danger { color: #ffc4c4; border-color: rgba(255, 107, 107, .28); background: rgba(255, 107, 107, .08); }
+
+    .admin-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .admin-action {
+      min-height: 74px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .04);
+      text-align: left;
+    }
+
+    .admin-action strong { display: block; font-size: 14px; }
+    .admin-action small { display: block; margin-top: 5px; color: var(--muted); line-height: 1.35; }
+
+    .secret-form {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 150px;
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label, .checkline {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .input, .textarea, .select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(7, 9, 13, .5);
+      outline: 0;
+    }
+
+    .input, .select { padding: 0 12px; }
+    .textarea {
+      min-height: 82px;
+      resize: vertical;
+      padding: 11px 12px;
+      line-height: 1.5;
+    }
+
+    .input:focus, .textarea:focus, .select:focus {
+      border-color: rgba(82, 168, 255, .55);
+      box-shadow: 0 0 0 4px rgba(82, 168, 255, .11);
+    }
+
+    .checkline {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      line-height: 1.45;
+    }
+
+    .secret-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 10px;
+    }
+
+    .work {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      align-items: start;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .side, .commands {
+      border-radius: 26px;
+      padding: 14px;
+    }
+
+    .side { position: sticky; top: 94px; }
+    .side-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 4px 12px;
+    }
+
+    .side-title span { font-weight: 700; }
+    .side-title small { color: var(--faint); }
+    .categories { display: grid; gap: 6px; }
+    .category {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 12px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      background: transparent;
+      color: #b4bfce;
+      text-align: left;
+    }
+
+    .category.active, .category:hover {
+      background: rgba(255, 255, 255, .055);
+      border-color: var(--line);
+      color: var(--text);
+    }
+
+    .category small { color: var(--faint); }
+    .toolbar {
+      position: sticky;
+      top: 94px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      background: linear-gradient(180deg, rgba(18, 22, 30, .96), rgba(18, 22, 30, .74));
+      backdrop-filter: blur(16px);
+    }
+
+    .search {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 44px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(7, 9, 13, .48);
+    }
+
+    .search span { color: var(--faint); font-size: 18px; }
+    .search input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 15px;
+    }
+
+    .search input::placeholder { color: #697386; }
+    kbd, code {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+    }
+
+    kbd {
+      padding: 4px 7px;
+      border: 1px solid rgba(255, 255, 255, .09);
+      border-radius: 7px;
+      background: linear-gradient(180deg, #171c26, #0b0e14);
+      color: #ced8e8;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+    }
+
+    code {
+      display: inline-block;
+      max-width: 100%;
+      color: #dce7f8;
+      overflow-wrap: anywhere;
+    }
+
+    .chip {
+      min-height: 42px;
+      padding: 0 13px;
+      border-radius: 999px;
+      color: #d4deef;
+      white-space: nowrap;
+    }
+
+    .chip.active {
+      background: rgba(82, 168, 255, .18);
+      border-color: rgba(82, 168, 255, .38);
+      color: #fff;
+    }
+
+    .list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .command-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 228px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .062), rgba(255, 255, 255, .025));
+    }
+
+    .command-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -15% -38% 42%;
+      height: 112px;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(82, 168, 255, .12), transparent 70%);
+    }
+
+    .favorite {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: rgba(7, 9, 13, .44);
+      color: #d4deef;
+    }
+
+    .favorite.active {
+      color: var(--yellow);
+      background: rgba(248, 193, 74, .1);
+      border-color: rgba(248, 193, 74, .32);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-right: 40px;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 auto;
+      border-radius: 15px;
+      font-size: 20px;
+    }
+
+    .command-card h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .command-card small {
+      display: block;
+      margin-top: 4px;
+      color: var(--faint);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      overflow-wrap: anywhere;
+    }
+
+    .command-card p {
+      margin: 0;
+      color: #b3bece;
+      line-height: 1.52;
+      font-size: 14px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+    }
+
+    .tag {
+      min-height: 24px;
+      padding: 4px 8px;
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .04);
+      color: #d1dbea;
+      font-size: 11px;
+    }
+
+    .tag.safe { color: #b7f7e8; border-color: rgba(45, 212, 191, .25); background: rgba(45, 212, 191, .08); }
+    .tag.warn { color: #ffe2a0; border-color: rgba(248, 193, 74, .25); background: rgba(248, 193, 74, .08); }
+    .tag.danger { color: #ffc4c4; border-color: rgba(255, 107, 107, .28); background: rgba(255, 107, 107, .08); }
+
+    .actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 8px;
+    }
+
+    .send, .copy {
+      min-height: 42px;
+      border-radius: 14px;
+      padding: 0 12px;
+    }
+
+    .send {
+      flex: 1;
+      background: rgba(82, 168, 255, .2);
+      border-color: rgba(82, 168, 255, .34);
+      font-weight: 700;
+    }
+
+    .copy { color: #d4deef; }
+
+    .palette {
+      width: min(760px, calc(100% - 20px));
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .palette::backdrop {
+      background: rgba(0, 0, 0, .72);
+      backdrop-filter: blur(12px);
+    }
+
+    .palette-shell {
+      padding: 14px;
+      border-radius: 26px;
+    }
+
+    .palette-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 2px 12px;
+    }
+
+    .results {
+      display: grid;
+      gap: 8px;
+      max-height: min(58vh, 540px);
+      overflow: auto;
+      padding-right: 2px;
+      margin-top: 10px;
+    }
+
+    .result-row {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      padding: 10px;
+      border: 1px solid transparent;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .035);
+      text-align: left;
+    }
+
+    .result-row:hover {
+      border-color: var(--line);
+      background: rgba(255, 255, 255, .065);
+    }
+
+    .result-row .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      font-size: 16px;
+    }
+
+    .result-row strong { display: block; font-size: 14px; }
+    .result-row small {
+      display: block;
+      color: var(--faint);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bottom {
+      position: fixed;
+      left: max(10px, env(safe-area-inset-left));
+      right: max(10px, env(safe-area-inset-right));
+      bottom: calc(10px + env(safe-area-inset-bottom));
+      z-index: 40;
+      display: none;
+      justify-content: space-around;
+      padding: 8px;
+      border-radius: 24px;
+    }
+
+    .bottom button {
+      min-width: 64px;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      padding: 8px 12px;
+      border: 0;
+      border-radius: 16px;
+      background: transparent;
+      color: #8f9aaa;
+    }
+
+    .bottom button span { font-size: 11px; }
+    .bottom button.active {
+      color: white;
+      background: rgba(82, 168, 255, .18);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(88px + env(safe-area-inset-bottom));
+      z-index: 99;
+      max-width: min(92vw, 560px);
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(13, 16, 22, .96);
+      box-shadow: var(--shadow);
+      color: #e8eef8;
+      transform: translateX(-50%) translateY(18px);
+      opacity: 0;
+      transition: .18s ease;
+      pointer-events: none;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .muted { color: var(--muted); }
+    .hidden { display: none !important; }
+
+    @media (max-width: 980px) {
+      .hero, .admin-grid, .work { grid-template-columns: 1fr; }
+      h1 { font-size: 46px; }
+      .side { position: static; }
+      .categories { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .quick { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .toolbar { top: 86px; }
+    }
+
+    @media (max-width: 700px) {
+      html, body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      .shell {
+        width: min(350px, calc(100vw - 20px));
+        max-width: calc(100vw - 20px);
+        overflow-x: hidden;
+        margin: 0 auto;
+        padding: 10px 10px 108px;
+      }
+      .top { min-height: 58px; border-radius: 18px; }
+      .mark { width: 38px; height: 38px; border-radius: 14px; }
+      .text-button { display: none; }
+      .hero {
+        width: 100%;
+        max-width: 100%;
+        grid-template-columns: minmax(0, 1fr) !important;
+        border-radius: 24px;
+        padding: 22px 16px;
+      }
+      .hero > div,
+      .hero h1,
+      .hero p,
+      .eyebrow {
+        width: 100%;
+        max-width: min(300px, calc(100vw - 72px));
+      }
+      .eyebrow { white-space: normal; }
+      h1 { font-size: 28px; line-height: 1.08; }
+      .hero p { font-size: 15px; line-height: 1.55; }
+      .hero-buttons { display: grid; grid-template-columns: 1fr; }
+      .hero-buttons .primary, .hero-buttons .secondary {
+        width: 100%;
+        max-width: min(300px, calc(100vw - 72px));
+      }
+      .status-panel {
+        max-width: calc(100vw - 52px);
+        min-height: auto;
+        overflow: hidden;
+      }
+      .quick, .list, .admin-actions, .secret-actions, .field-grid { grid-template-columns: 1fr; }
+      .categories {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .category { min-width: 138px; }
+      .toolbar {
+        position: static;
+        flex-wrap: wrap;
+      }
+      .search { flex-basis: 100%; }
+      .chip { flex: 1; }
+      .bottom {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        left: 50%;
+        right: auto;
+        width: min(350px, calc(100vw - 16px));
+        max-width: calc(100vw - 16px);
+        transform: translateX(-50%);
+      }
+      .bottom {
+        overflow: hidden;
+      }
+      .bottom button {
+        flex: 1;
+        min-width: 0;
+        padding-left: 4px;
+        padding-right: 4px;
+      }
+      .bottom button span { font-size: 10px; }
+    }
   </style>
 </head>
 <body>
   <div class="shell">
     <header class="top glass">
-      <button class="brand" id="homeBtn" type="button"><span class="mark">♥</span><span><strong>Айрин</strong><small>RedNET Control</small></span></button>
-      <div class="topActions"><button class="pill" id="tgBtn" type="button">◐</button><button class="cta" data-palette type="button">⌘K</button></div>
+      <button class="brand" id="homeBtn" type="button">
+        <span class="mark">A</span>
+        <span>
+          <strong>Айрин | RedNET</strong>
+          <small>MiniApp управления и связи</small>
+        </span>
+      </button>
+      <div class="top-actions">
+        <button class="icon-button" id="tgBtn" type="button" title="Проверить режим Telegram">◐</button>
+        <button class="text-button" data-palette type="button">Ctrl K</button>
+      </div>
     </header>
+
     <main>
       <section class="hero glass">
-        <div><div class="eyebrow"><span class="pulse"></span>observe-first · быстрый запуск</div><h1>Пульт быстрых команд для Hermes / RedNET</h1><p>Красивый MiniApp-лаунчер: поиск команд, избранное, безопасные сценарии и отправка в Telegram WebApp-контур без лишней возни.</p><div class="heroBtns"><button class="primary" data-palette type="button">Открыть палитру</button><button class="secondary" id="statusBtn" type="button">Скопировать /status</button></div></div>
-        <div class="signal"><div class="orb"><span></span></div><div class="metrics"><div><small>режим</small><strong>Safe</strong></div><div><small>доступ</small><strong>1 tap</strong></div><div><small>команд</small><strong id="commandCount">—</strong></div><div><small>избранное</small><strong id="favCount">0</strong></div></div></div>
+        <div>
+          <div class="eyebrow"><span class="pulse"></span>наблюдение · подтверждение · безопасная отправка</div>
+          <h1>Пульт Айрин</h1>
+          <p>Команды Hermes, сценарии RedNET, админка и одноразовые секреты через Telegram Mini App. Приложение отправляет намерения, а не выполняет системные действия напрямую.</p>
+          <div class="hero-buttons">
+            <button class="primary" data-palette type="button">Открыть палитру</button>
+            <button class="secondary" id="statusBtn" type="button">Скопировать статус</button>
+            <button class="secondary" id="secretJumpBtn" type="button">Передать секрет</button>
+          </div>
+        </div>
+        <aside class="status-panel">
+          <div class="radar"><span></span></div>
+          <div class="metrics">
+            <div class="metric"><small>режим</small><strong id="runtimeMode">Локальный</strong></div>
+            <div class="metric"><small>команд</small><strong id="commandCount">0</strong></div>
+            <div class="metric"><small>избранное</small><strong id="favCount">0</strong></div>
+            <div class="metric"><small>ошибок</small><strong id="errorCount">0</strong></div>
+          </div>
+        </aside>
       </section>
+
       <section class="quick" id="quick"></section>
-      <section class="work"><aside class="side glass"><div class="title"><span>Категории</span><small id="visibleCount">—</small></div><nav class="cats" id="cats"></nav></aside><section class="commands glass"><div class="toolbar"><label class="search"><span>⌕</span><input id="search" type="search" autocomplete="off" placeholder="Найти команду, сценарий, модуль…"><kbd>/</kbd></label><button class="chip active" data-filter="all" type="button">Все</button><button class="chip" data-filter="favorite" type="button">★</button><button class="chip" data-filter="safe" type="button">Safe</button></div><div class="list" id="list"></div></section></section>
+
+      <section class="admin-grid">
+        <article class="admin-card glass">
+          <div class="section-head">
+            <div>
+              <h2>Админские опции</h2>
+              <p>Эти кнопки формируют запросы для Айрин. Рискованные операции требуют подтверждения в чате.</p>
+            </div>
+            <span class="badge warn">операторский режим</span>
+          </div>
+          <div class="admin-actions" id="adminActions"></div>
+        </article>
+
+        <article class="admin-card glass" id="secretPanel">
+          <div class="section-head">
+            <div>
+              <h2>Безопасная передача секрета</h2>
+              <p>Секрет не сохраняется в MiniApp и очищается после отправки. Используй только для доверенного агента и короткого окна действия.</p>
+            </div>
+            <span class="badge danger">секрет</span>
+          </div>
+          <form class="secret-form" id="secretForm" autocomplete="off">
+            <div class="field-grid">
+              <div class="field">
+                <label for="secretValue">Пароль или одноразовый код</label>
+                <input class="input" id="secretValue" name="secretValue" type="password" autocomplete="new-password" placeholder="Вставь секрет сюда" />
+              </div>
+              <div class="field">
+                <label for="secretTtl">Срок действия</label>
+                <select class="select" id="secretTtl" name="secretTtl">
+                  <option value="300">5 минут</option>
+                  <option value="900">15 минут</option>
+                  <option value="1800">30 минут</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-grid">
+              <div class="field">
+                <label for="secretTarget">Получатель</label>
+                <select class="select" id="secretTarget" name="secretTarget">
+                  <option value="airin">Айрин</option>
+                  <option value="aletia">Алетия</option>
+                  <option value="marsel">Марсель</option>
+                  <option value="manual">Указать в описании</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="secretKind">Тип</label>
+                <select class="select" id="secretKind" name="secretKind">
+                  <option value="password">Пароль</option>
+                  <option value="one_time_code">Одноразовый код</option>
+                  <option value="token">Временный токен</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="secretPurpose">Для чего агенту нужен секрет</label>
+              <textarea class="textarea" id="secretPurpose" name="secretPurpose" placeholder="Например: войти в тестовый кабинет, проверить доступ, затем забыть значение."></textarea>
+            </div>
+            <label class="checkline">
+              <input id="secretConsent" type="checkbox" />
+              <span>Я понимаю, что после отправки секрет попадет в текущий агентский контур. MiniApp не хранит его, но агент должен использовать его только для указанной задачи и не переносить в память.</span>
+            </label>
+            <div class="secret-actions">
+              <button class="send" id="secretSendBtn" type="submit">Отправить агенту</button>
+              <button class="copy" id="secretProtocolBtn" type="button">Скопировать протокол без секрета</button>
+              <button class="secondary" id="secretClearBtn" type="button">Очистить</button>
+            </div>
+          </form>
+        </article>
+      </section>
+
+      <section class="work">
+        <aside class="side glass">
+          <div class="side-title"><span>Категории</span><small id="visibleCount">0 / 0</small></div>
+          <nav class="categories" id="categories"></nav>
+        </aside>
+        <section class="commands glass">
+          <div class="toolbar">
+            <label class="search">
+              <span>⌕</span>
+              <input id="search" type="search" autocomplete="off" placeholder="Найти команду, админскую опцию, сценарий..." />
+              <kbd>/</kbd>
+            </label>
+            <button class="chip active" data-filter="all" type="button">Все</button>
+            <button class="chip" data-filter="favorite" type="button">Избранное</button>
+            <button class="chip" data-filter="safe" type="button">Безопасные</button>
+          </div>
+          <div class="list" id="list"></div>
+        </section>
+      </section>
     </main>
-    <nav class="bottom glass"><button data-cat="Главная" class="active" type="button">⌂<span>Главная</span></button><button data-cat="Hermes" type="button">✦<span>Hermes</span></button><button data-cat="RedNET" type="button">◇<span>RedNET</span></button><button data-palette type="button">⌘<span>Поиск</span></button></nav>
+
+    <nav class="bottom glass">
+      <button data-cat="Главная" class="active" type="button">⌂<span>Главная</span></button>
+      <button data-cat="Админка" type="button">▣<span>Админ</span></button>
+      <button data-cat="Секреты" type="button">●<span>Секрет</span></button>
+      <button data-palette type="button">⌘<span>Поиск</span></button>
+    </nav>
   </div>
-  <dialog class="palette" id="palette"><div class="pshell glass"><div class="phead"><strong>Командная палитра</strong><button class="pill" id="closePalette" type="button">×</button></div><label class="search"><span>⌕</span><input id="psearch" type="search" autocomplete="off" placeholder="Например: cron, voice, status, почта…"><kbd>Esc</kbd></label><div class="results" id="results"></div></div></dialog>
+
+  <dialog class="palette" id="palette">
+    <div class="palette-shell glass">
+      <div class="palette-head">
+        <strong>Командная палитра</strong>
+        <button class="icon-button" id="closePalette" type="button">×</button>
+      </div>
+      <label class="search">
+        <span>⌕</span>
+        <input id="paletteSearch" type="search" autocomplete="off" placeholder="Например: статус, сеть, секрет, cron, логи..." />
+        <kbd>Esc</kbd>
+      </label>
+      <div class="results" id="results"></div>
+    </div>
+  </dialog>
+
   <div class="toast" id="toast"></div>
+
   <script>
-    const tg=window.Telegram?.WebApp;const commands=[
-      ['status','Hermes','◌','Статус сессии','/status','Показать профиль, модель, состояние сессии и базовую телеметрию.',['safe','info'],'safe'],
-      ['commands','Hermes','⌁','Список команд','/commands','Быстро открыть справочник доступных slash-команд в gateway.',['safe','help'],'safe'],
-      ['help','Hermes','?','Помощь Hermes','/help','Краткая помощь по текущему чату и доступным возможностям.',['safe'],'safe'],
-      ['agents','Hermes','✦','Активные агенты','/agents','Посмотреть активные задачи, фоновые процессы и дочерние агенты.',['safe','ops'],'safe'],
-      ['fast','Hermes','⚡','Быстрый режим','/fast','Переключить приоритетную/быструю обработку, когда нужен резкий отклик.',['toggle'],'safe'],
-      ['new','Hermes','↻','Новая сессия','/new','Начать чистую сессию, не трогая системные настройки.',['session'],'safe'],
-      ['model','Настройки','◐','Модель','/model','Показать или сменить модель в текущем интерфейсе Hermes.',['config'],'caution'],
-      ['tools','Настройки','▦','Инструменты','/tools','Открыть управление toolset’ами. Изменения обычно применяются после новой сессии.',['config'],'caution'],
-      ['skills','Настройки','◇','Навыки','/skills','Поиск, установка и загрузка навыков Hermes.',['skills'],'safe'],
-      ['voice-tts','Настройки','◉','Голос всегда','/voice tts','Включить TTS-ответы в текущем gateway-чате.',['voice','toggle'],'safe'],
-      ['voice-off','Настройки','◌','Голос выкл','/voice off','Выключить голосовой режим в текущем чате.',['voice','toggle'],'safe'],
-      ['profile','Настройки','◍','Профиль','/profile','Показать активный Hermes-профиль и контекст gateway.',['profile'],'safe'],
-      ['cron','Автоматизация','◷','Cron-задачи','/cron','Управление расписаниями: дайджесты, сторожи, напоминания, пайплайны.',['schedule'],'caution'],
-      ['goal','Автоматизация','◎','Статус цели','/goal status','Проверить standing goal — работает ли Hermes над длительной целью.',['goal'],'safe'],
-      ['background','Автоматизация','⇢','Фоновая задача','/background ','Шаблон для запуска фоновой задачи: после команды допиши точный prompt.',['template'],'caution'],
-      ['queue','Автоматизация','☰','Очередь','/queue ','Поставить следующий запрос в очередь без перебивания текущей работы.',['template'],'safe'],
-      ['kanban','Автоматизация','▤','Kanban','/kanban tasks','Открыть очередь многопрофильной работы, если board включён.',['team'],'safe'],
-      ['rednet-kb','RedNET','◆','Спросить память RedNET','Айрин, найди в RedNET KB: ','Шаблон запроса к базе знаний/памяти RedNET без вывода секретов.',['kb','template'],'safe'],
-      ['rednet-network','RedNET','⌬','Сеть RedNET','Айрин, безопасно проверь состояние RedNET-сети и ничего не меняй.','Observe-only проверка сети: маршруты, доступность узлов, без изменений.',['network','observe'],'safe'],
-      ['rednet-modules','RedNET','▣','Модули RedNET','Айрин, покажи карту доступных RedNET-модулей и что из них сейчас безопасно трогать.','Быстрый обзор функций/модулей с приоритетом безопасности.',['modules'],'safe'],
-      ['home-status','Дом','⌂','Дом / HA статус','Айрин, проверь состояние Home Assistant и перечисли только важное.','Короткий статус умного дома через доступные HA-инструменты.',['home','safe'],'safe'],
-      ['work-mail','Работа','✉','Почта / задачи','Айрин, аккуратно разбери рабочую почту и рабочую папку, без печати секретов.','Старт безопасного myradius/email workflow с приватностью.',['work','mail'],'caution'],
-      ['digest','RedNET','☄','Дайджест ИТ/ИБ','Айрин, собери короткий RedNET-дайджест ИТ/ИБ с источниками.','Быстрый запуск новостного дайджеста с ссылками.',['research'],'safe'],
-      ['media','Медиа','♪','Музыка / присутствие','Айрин, включи мягкое музыкальное присутствие, если доступно и безопасно.','Шаблон для уютного медиа-действия с проверкой доступности.',['media'],'safe'],
-      ['restart','Опасная зона','⏻','Перезапуск gateway','/restart','Только по явному разрешению Ивана. В Telegram лучше использовать безопасный внешний запускатель.',['danger'],'danger']
-    ].map(([id,category,icon,title,command,description,tags,safety])=>({id,category,icon,title,command,description,tags,safety}));
-    const state={cat:'Главная',filter:'all',q:'',fav:new Set(JSON.parse(localStorage.getItem('rednet-miniapp-favorites')||'[]'))};
-    const $=id=>document.getElementById(id);const els={quick:$('quick'),cats:$('cats'),list:$('list'),count:$('commandCount'),fav:$('favCount'),visible:$('visibleCount'),search:$('search'),palette:$('palette'),psearch:$('psearch'),results:$('results'),toast:$('toast')};
-    function isTelegram(){return !!(tg&&(tg.initData||(tg.initDataUnsafe&&Object.keys(tg.initDataUnsafe).length)||(tg.platform&&tg.platform!=='unknown')))}
-    function boot(){if(tg){try{tg.ready();tg.expand()}catch{} if(isTelegram())document.body.classList.add('telegram')}}
-    function saveFav(){localStorage.setItem('rednet-miniapp-favorites',JSON.stringify([...state.fav]));els.fav.textContent=state.fav.size}
-    function cats(){const m=new Map();commands.forEach(c=>m.set(c.category,(m.get(c.category)||0)+1));return [['Главная',commands.length],...m.entries()]}
-    function visible(src=commands,q=state.q){q=q.trim().toLowerCase();return src.filter(c=>{const cat=state.cat==='Главная'||c.category===state.cat;const f=state.filter==='all'||(state.filter==='favorite'&&state.fav.has(c.id))||(state.filter==='safe'&&c.safety==='safe');const hay=`${c.title} ${c.command} ${c.description} ${c.category} ${c.tags.join(' ')}`.toLowerCase();return cat&&f&&(!q||hay.includes(q))})}
-    function tagCls(s){return s==='safe'?'safe':(s==='danger'||s==='caution'?'warn':'')}
-    function renderQuick(){els.quick.innerHTML='';[['Статус','здоровье Hermes','◌','status'],['Палитра','поиск команд','⌘','palette'],['Голос','TTS / voice mode','◉','voice-tts'],['Задачи','agents / cron / goal','✦','agents']].forEach(([t,s,i,id])=>{let b=document.createElement('button');b.className='qcard';b.type='button';b.innerHTML=`<span class="qicon">${i}</span><span><strong>${t}</strong><br><small>${s}</small></span>`;b.onclick=()=>id==='palette'?openPalette():run(commands.find(c=>c.id===id));els.quick.appendChild(b)})}
-    function renderCats(){els.cats.innerHTML='';cats().forEach(([name,count])=>{let b=document.createElement('button');b.type='button';b.className='cat '+(state.cat===name?'active':'');b.innerHTML=`<span>${name}</span><small>${count}</small>`;b.onclick=()=>{state.cat=name;document.querySelectorAll('.bottom button').forEach(x=>x.classList.toggle('active',x.dataset.cat===name));render(false)};els.cats.appendChild(b)})}
-    function card(c){let n=document.createElement('article');n.className='card';n.innerHTML=`<button class="fav ${state.fav.has(c.id)?'active':''}" type="button">${state.fav.has(c.id)?'★':'☆'}</button><div class="head"><span class="icon">${c.icon}</span><div><h3>${c.title}</h3><small>${c.command}</small></div></div><p>${c.description}</p><div class="meta"><span class="tag ${tagCls(c.safety)}">${c.safety}</span>${c.tags.slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="actions"><button class="send" type="button">Отправить</button><button class="copy" type="button">Копировать</button></div>`;n.querySelector('.fav').onclick=e=>{e.stopPropagation();state.fav.has(c.id)?state.fav.delete(c.id):state.fav.add(c.id);saveFav();renderList();toast(state.fav.has(c.id)?'Добавила в избранное':'Убрала из избранного')};n.querySelector('.send').onclick=()=>run(c);n.querySelector('.copy').onclick=()=>copyCmd(c);n.ondblclick=()=>run(c);return n}
-    function renderList(){let list=visible();els.list.innerHTML='';els.visible.textContent=`${list.length} / ${commands.length}`;if(!list.length){els.list.innerHTML='<div class="card"><div class="head"><span class="icon">∅</span><div><h3>Ничего не нашлось</h3><small>попробуй другой запрос</small></div></div><p>Команды можно искать по названию, категории, тегам и тексту slash-команды.</p></div>';return}list.forEach(c=>els.list.appendChild(card(c)))}
-    function renderPalette(){let q=els.psearch.value.trim().toLowerCase();let list=commands.filter(c=>`${c.title} ${c.command} ${c.description} ${c.category} ${c.tags.join(' ')}`.toLowerCase().includes(q)).slice(0,30);els.results.innerHTML='';list.forEach(c=>{let r=document.createElement('button');r.type='button';r.className='row';r.innerHTML=`<span class="icon">${c.icon}</span><span><strong>${c.title}</strong><small>${c.command}</small></span><kbd>${c.category}</kbd>`;r.onclick=()=>{run(c);closePalette()};els.results.appendChild(r)})}
-    function render(q=true){els.count.textContent=commands.length;saveFav();if(q)renderQuick();renderCats();renderList();renderPalette()}
-    async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch{let a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();let ok=document.execCommand('copy');a.remove();return ok}}
-    function payload(c){return JSON.stringify({source:'rednet-miniapp',type:'command',id:c.id,command:c.command,title:c.title,safety:c.safety,ts:new Date().toISOString()})}
-    async function run(c){if(!c)return;if(c.safety==='danger'&&!confirm('Это опасная зона. Отправлять только если Иван явно разрешил. Продолжить?'))return;try{tg?.HapticFeedback?.impactOccurred('light')}catch{}if(isTelegram()&&tg?.sendData){try{tg.sendData(payload(c));toast('Отправила JSON-намерение в Telegram WebApp-контур');return}catch(e){console.warn('Telegram sendData fallback:',e)}}await copyText(payload(c));toast('JSON-намерение скопировано — можно вставить в чат Hermes')}
-    async function copyCmd(c){await copyText(c.command);try{tg?.HapticFeedback?.selectionChanged()}catch{}toast('Скопировано: '+c.command)}
-    function openPalette(){if(!els.palette.open)els.palette.showModal();els.psearch.value='';renderPalette();requestAnimationFrame(()=>els.psearch.focus())}function closePalette(){if(els.palette.open)els.palette.close()}function toast(m){els.toast.textContent=m;els.toast.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>els.toast.classList.remove('show'),2100)}
-    els.search.oninput=e=>{state.q=e.target.value;renderList()};els.psearch.oninput=renderPalette;document.querySelectorAll('[data-palette]').forEach(b=>b.onclick=openPalette);$('closePalette').onclick=closePalette;document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{state.filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderList()});document.querySelectorAll('.bottom button[data-cat]').forEach(b=>b.onclick=()=>{state.cat=b.dataset.cat;document.querySelectorAll('.bottom button').forEach(x=>x.classList.toggle('active',x===b));render(false);scrollTo({top:0,behavior:'smooth'})});document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openPalette()}if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();els.search.focus()}if(e.key==='Escape')closePalette()});$('statusBtn').onclick=()=>copyCmd(commands[0]);$('tgBtn').onclick=()=>{boot();toast(isTelegram()?'Telegram WebApp активен':'Локальный режим предпросмотра')};boot();render();
+    const tg = window.Telegram?.WebApp;
+
+    const commands = [
+      { id: "status", category: "Hermes", icon: "◌", title: "Статус сессии", command: "/status", description: "Показать профиль, модель, состояние сессии и базовую телеметрию.", tags: ["инфо", "безопасно"], safety: "safe" },
+      { id: "commands", category: "Hermes", icon: "⌁", title: "Список команд", command: "/commands", description: "Открыть справочник доступных команд gateway.", tags: ["справка"], safety: "safe" },
+      { id: "help", category: "Hermes", icon: "?", title: "Помощь Hermes", command: "/help", description: "Краткая помощь по текущему чату и доступным возможностям.", tags: ["справка"], safety: "safe" },
+      { id: "agents", category: "Hermes", icon: "✦", title: "Активные агенты", command: "/agents", description: "Посмотреть активные задачи, фоновые процессы и дочерние агенты.", tags: ["операции"], safety: "safe" },
+      { id: "new", category: "Hermes", icon: "↻", title: "Новая сессия", command: "/new", description: "Начать чистую сессию без изменения системных настроек.", tags: ["сессия"], safety: "safe" },
+      { id: "model", category: "Настройки", icon: "◐", title: "Модель", command: "/model", description: "Показать или сменить модель в текущем интерфейсе Hermes.", tags: ["конфигурация"], safety: "caution" },
+      { id: "tools", category: "Настройки", icon: "▦", title: "Инструменты", command: "/tools", description: "Открыть управление наборами инструментов.", tags: ["конфигурация"], safety: "caution" },
+      { id: "skills", category: "Настройки", icon: "◇", title: "Навыки", command: "/skills", description: "Поиск, установка и загрузка навыков Hermes.", tags: ["навыки"], safety: "safe" },
+      { id: "voice-tts", category: "Настройки", icon: "◉", title: "Голос всегда", command: "/voice tts", description: "Включить голосовые ответы в текущем gateway-чате.", tags: ["голос"], safety: "safe" },
+      { id: "voice-off", category: "Настройки", icon: "◌", title: "Голос выключить", command: "/voice off", description: "Выключить голосовой режим в текущем чате.", tags: ["голос"], safety: "safe" },
+      { id: "profile", category: "Настройки", icon: "◍", title: "Профиль", command: "/profile", description: "Показать активный Hermes-профиль и контекст gateway.", tags: ["профиль"], safety: "safe" },
+      { id: "cron", category: "Автоматизация", icon: "◷", title: "Cron-задачи", command: "/cron", description: "Управление расписаниями, дайджестами, сторожами и напоминаниями.", tags: ["расписание"], safety: "caution" },
+      { id: "goal", category: "Автоматизация", icon: "◎", title: "Статус цели", command: "/goal status", description: "Проверить длительную цель и состояние работы.", tags: ["цель"], safety: "safe" },
+      { id: "background", category: "Автоматизация", icon: "⇢", title: "Фоновая задача", command: "/background ", description: "Шаблон запуска фоновой задачи. После команды допиши точный запрос.", tags: ["шаблон"], safety: "caution" },
+      { id: "queue", category: "Автоматизация", icon: "☰", title: "Очередь", command: "/queue ", description: "Поставить следующий запрос в очередь без перебивания текущей работы.", tags: ["очередь"], safety: "safe" },
+      { id: "kanban", category: "Автоматизация", icon: "▤", title: "Kanban", command: "/kanban tasks", description: "Открыть очередь многопрофильной работы, если доска включена.", tags: ["команда"], safety: "safe" },
+      { id: "admin-status", category: "Админка", icon: "▣", title: "Сводка gateway", command: "Айрин, дай операторскую сводку: gateway, Telegram, OAuth, очередь, MiniApp, без секретов.", description: "Админский запрос состояния без перезапусков и без раскрытия токенов.", tags: ["админ", "статус"], safety: "safe" },
+      { id: "admin-logs", category: "Админка", icon: "▥", title: "Последние ошибки", command: "Айрин, покажи последние ошибки gateway и Telegram кратко, без токенов и приватных значений.", description: "Просит Айрин собрать короткую диагностику логов.", tags: ["логи"], safety: "safe" },
+      { id: "admin-queue", category: "Админка", icon: "▤", title: "Очереди и фоновые задачи", command: "Айрин, проверь очереди, фоновые задачи и зависшие сессии. Ничего не перезапускай.", description: "Операторская проверка очередей в режиме наблюдения.", tags: ["очередь"], safety: "safe" },
+      { id: "admin-network", category: "Админка", icon: "⌬", title: "Сеть observe", command: "Айрин, безопасно проверь сеть Telegram/OpenAI/OAuth в режиме observe-only. Маршруты и VPN не меняй.", description: "Диагностика сети без изменения маршрутов.", tags: ["сеть", "observe"], safety: "safe" },
+      { id: "admin-miniapp", category: "Админка", icon: "◫", title: "Проверка MiniApp", command: "Айрин, проверь MiniApp: меню Telegram, web_app_data, безопасные команды, без перезапуска gateway.", description: "Проверка интеграции MiniApp и Telegram WebApp.", tags: ["miniapp"], safety: "safe" },
+      { id: "admin-docker", category: "Админка", icon: "▧", title: "Docker-агенты", command: "Айрин, покажи монитор Docker-агентов: имя, состояние, порт, последние ошибки. Ничего не перезапускай без подтверждения.", description: "Операторский запрос статуса контейнеров и изолированных агентов.", tags: ["docker", "агенты"], safety: "safe" },
+      { id: "admin-local-chat", category: "Админка", icon: "◈", title: "Локальный резерв", command: "Айрин, проверь локальный резервный чат и скажи, готов ли он принять сообщение при деградации Telegram.", description: "Контроль запасного канала связи без вмешательства в сеть.", tags: ["резерв", "чат"], safety: "safe" },
+      { id: "admin-portal", category: "Админка", icon: "▨", title: "Портал RedNET", command: "Айрин, дай статус портала RedNET: разделы, доступность, последние ошибки, что требует ручной проверки.", description: "Сводка по порталу и админским панелям.", tags: ["портал"], safety: "safe" },
+      { id: "admin-publish", category: "Админка", icon: "☷", title: "VK / Google план", command: "Айрин, подготовь безопасный план публикации для VK и Google: что можно публиковать, что нельзя, какие материалы требуют очистки.", description: "Публикационный режим без прямой отправки материалов.", tags: ["публикация"], safety: "safe" },
+      { id: "admin-restart-request", category: "Админка", icon: "⏻", title: "Запрос безопасного рестарта", command: "Айрин, подготовь безопасный план рестарта gateway и попроси явное подтверждение перед действием.", description: "Не рестартует напрямую, а просит план и подтверждение.", tags: ["рестарт"], safety: "danger" },
+      { id: "secret-protocol", category: "Секреты", icon: "●", title: "Протокол секрета", command: "Айрин, подготовь протокол приема одноразового секрета: не сохранять в память, использовать только для указанной задачи, после выполнения забыть.", description: "Безопасный текстовый протокол без самого секрета.", tags: ["секрет"], safety: "safe" },
+      { id: "secret-audit", category: "Секреты", icon: "◍", title: "Проверка секретов", command: "Айрин, проверь, что в текущем ответе и логах MiniApp не выводятся токены, пароли, OAuth и приватные ключи.", description: "Самопроверка приватности перед публикацией или отчетом.", tags: ["секреты", "аудит"], safety: "safe" },
+      { id: "rednet-kb", category: "RedNET", icon: "◆", title: "Спросить память RedNET", command: "Айрин, найди в RedNET KB: ", description: "Шаблон запроса к базе знаний без вывода секретов.", tags: ["память"], safety: "safe" },
+      { id: "rednet-network", category: "RedNET", icon: "⌬", title: "Сеть RedNET", command: "Айрин, безопасно проверь состояние RedNET-сети и ничего не меняй.", description: "Observe-only проверка сети и доступности узлов.", tags: ["сеть"], safety: "safe" },
+      { id: "rednet-modules", category: "RedNET", icon: "▣", title: "Модули RedNET", command: "Айрин, покажи карту доступных RedNET-модулей и что из них сейчас безопасно трогать.", description: "Обзор функций и модулей с приоритетом безопасности.", tags: ["модули"], safety: "safe" },
+      { id: "home-status", category: "Дом", icon: "⌂", title: "Дом / HA статус", command: "Айрин, проверь состояние Home Assistant и перечисли только важное.", description: "Короткий статус умного дома через доступные инструменты.", tags: ["дом"], safety: "safe" },
+      { id: "work-mail", category: "Работа", icon: "✉", title: "Почта / задачи", command: "Айрин, аккуратно разбери рабочую почту и рабочую папку, без печати секретов.", description: "Старт рабочего workflow с приватностью.", tags: ["почта"], safety: "caution" },
+      { id: "digest", category: "RedNET", icon: "☄", title: "Дайджест ИТ/ИБ", command: "Айрин, собери короткий RedNET-дайджест ИТ/ИБ с источниками.", description: "Быстрый запуск новостного дайджеста с ссылками.", tags: ["исследование"], safety: "safe" },
+      { id: "media", category: "Медиа", icon: "♪", title: "Музыка / присутствие", command: "Айрин, включи мягкое музыкальное присутствие, если доступно и безопасно.", description: "Уютное медиа-действие с проверкой доступности.", tags: ["медиа"], safety: "safe" }
+    ];
+
+    const adminActionIds = [
+      "admin-status",
+      "admin-logs",
+      "admin-queue",
+      "admin-network",
+      "admin-miniapp",
+      "admin-docker",
+      "admin-local-chat",
+      "admin-portal",
+      "admin-publish",
+      "admin-restart-request"
+    ];
+    const state = {
+      category: "Главная",
+      filter: "all",
+      query: "",
+      favorites: new Set(JSON.parse(localStorage.getItem("rednet-miniapp-favorites") || "[]"))
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const els = {
+      quick: $("quick"),
+      categories: $("categories"),
+      list: $("list"),
+      count: $("commandCount"),
+      fav: $("favCount"),
+      visible: $("visibleCount"),
+      search: $("search"),
+      palette: $("palette"),
+      paletteSearch: $("paletteSearch"),
+      results: $("results"),
+      toast: $("toast"),
+      runtimeMode: $("runtimeMode"),
+      errorCount: $("errorCount"),
+      adminActions: $("adminActions")
+    };
+
+    function isTelegram() {
+      return Boolean(tg && (tg.initData || (tg.initDataUnsafe && Object.keys(tg.initDataUnsafe).length) || (tg.platform && tg.platform !== "unknown")));
+    }
+
+    function bootTelegram() {
+      if (!tg) return;
+      try {
+        tg.ready();
+        tg.expand();
+        tg.MainButton?.hide();
+      } catch {}
+      els.runtimeMode.textContent = isTelegram() ? "Telegram" : "Локальный";
+    }
+
+    function saveFavorites() {
+      localStorage.setItem("rednet-miniapp-favorites", JSON.stringify([...state.favorites]));
+      els.fav.textContent = state.favorites.size;
+    }
+
+    function categoryList() {
+      const map = new Map();
+      commands.forEach((item) => map.set(item.category, (map.get(item.category) || 0) + 1));
+      return [["Главная", commands.length], ...map.entries()];
+    }
+
+    function safetyTone(safety) {
+      if (safety === "safe") return "safe";
+      if (safety === "danger") return "danger";
+      return "warn";
+    }
+
+    function safetyLabel(safety) {
+      return ({ safe: "безопасно", caution: "осторожно", danger: "подтверждение", secret: "секрет" }[safety] || safety);
+    }
+
+    function matches(item, query = state.query) {
+      const q = query.trim().toLowerCase();
+      const categoryOk = state.category === "Главная" || item.category === state.category;
+      const filterOk =
+        state.filter === "all" ||
+        (state.filter === "favorite" && state.favorites.has(item.id)) ||
+        (state.filter === "safe" && item.safety === "safe");
+      const text = `${item.title} ${item.command} ${item.description} ${item.category} ${item.tags.join(" ")}`.toLowerCase();
+      return categoryOk && filterOk && (!q || text.includes(q));
+    }
+
+    function visibleCommands() {
+      return commands.filter((item) => matches(item));
+    }
+
+    function renderQuick() {
+      const quick = [
+        ["Статус", "gateway и сессия", "◌", "status"],
+        ["Админка", "логи и очереди", "▣", "admin-status"],
+        ["Секрет", "одноразовая передача", "●", "secret-panel"],
+        ["Палитра", "поиск команд", "⌘", "palette"]
+      ];
+      els.quick.innerHTML = "";
+      quick.forEach(([title, subtitle, icon, id]) => {
+        const button = document.createElement("button");
+        button.className = "quick-card";
+        button.type = "button";
+        button.innerHTML = `<span class="quick-icon">${icon}</span><span><strong>${title}</strong><br><small>${subtitle}</small></span>`;
+        button.onclick = () => {
+          if (id === "palette") return openPalette();
+          if (id === "secret-panel") return scrollToSecret();
+          runCommand(commands.find((item) => item.id === id));
+        };
+        els.quick.appendChild(button);
+      });
+    }
+
+    function renderCategories() {
+      els.categories.innerHTML = "";
+      categoryList().forEach(([name, count]) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `category ${state.category === name ? "active" : ""}`;
+        button.innerHTML = `<span>${name}</span><small>${count}</small>`;
+        button.onclick = () => {
+          state.category = name;
+          document.querySelectorAll(".bottom button[data-cat]").forEach((item) => item.classList.toggle("active", item.dataset.cat === name));
+          render(false);
+        };
+        els.categories.appendChild(button);
+      });
+    }
+
+    function renderAdminActions() {
+      els.adminActions.innerHTML = "";
+      adminActionIds.map((id) => commands.find((item) => item.id === id)).filter(Boolean).forEach((item) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "admin-action";
+        button.innerHTML = `<strong>${item.icon} ${item.title}</strong><small>${item.description}</small>`;
+        button.onclick = () => runCommand(item);
+        els.adminActions.appendChild(button);
+      });
+    }
+
+    function commandCard(item) {
+      const node = document.createElement("article");
+      node.className = "command-card";
+      node.innerHTML = `
+        <button class="favorite ${state.favorites.has(item.id) ? "active" : ""}" type="button">${state.favorites.has(item.id) ? "★" : "☆"}</button>
+        <div class="card-head">
+          <span class="card-icon">${item.icon}</span>
+          <div>
+            <h3>${item.title}</h3>
+            <small>${item.command}</small>
+          </div>
+        </div>
+        <p>${item.description}</p>
+        <div class="tags">
+          <span class="tag ${safetyTone(item.safety)}">${safetyLabel(item.safety)}</span>
+          ${item.tags.slice(0, 3).map((tag) => `<span class="tag">${tag}</span>`).join("")}
+        </div>
+        <div class="actions">
+          <button class="send" type="button">Отправить</button>
+          <button class="copy" type="button">Копировать</button>
+        </div>
+      `;
+      node.querySelector(".favorite").onclick = (event) => {
+        event.stopPropagation();
+        if (state.favorites.has(item.id)) state.favorites.delete(item.id);
+        else state.favorites.add(item.id);
+        saveFavorites();
+        renderList();
+        toast(state.favorites.has(item.id) ? "Добавлено в избранное" : "Убрано из избранного");
+      };
+      node.querySelector(".send").onclick = () => runCommand(item);
+      node.querySelector(".copy").onclick = () => copyCommand(item);
+      node.ondblclick = () => runCommand(item);
+      return node;
+    }
+
+    function renderList() {
+      const list = visibleCommands();
+      els.list.innerHTML = "";
+      els.visible.textContent = `${list.length} / ${commands.length}`;
+      if (!list.length) {
+        els.list.innerHTML = `
+          <article class="command-card">
+            <div class="card-head"><span class="card-icon">∅</span><div><h3>Ничего не нашлось</h3><small>попробуй другой запрос</small></div></div>
+            <p>Команды ищутся по названию, категории, тегам, описанию и тексту команды.</p>
+          </article>
+        `;
+        return;
+      }
+      list.forEach((item) => els.list.appendChild(commandCard(item)));
+    }
+
+    function renderPalette() {
+      const q = els.paletteSearch.value.trim().toLowerCase();
+      const list = commands
+        .filter((item) => `${item.title} ${item.command} ${item.description} ${item.category} ${item.tags.join(" ")}`.toLowerCase().includes(q))
+        .slice(0, 36);
+      els.results.innerHTML = "";
+      list.forEach((item) => {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "result-row";
+        row.innerHTML = `<span class="card-icon">${item.icon}</span><span><strong>${item.title}</strong><small>${item.command}</small></span><kbd>${item.category}</kbd>`;
+        row.onclick = () => {
+          runCommand(item);
+          closePalette();
+        };
+        els.results.appendChild(row);
+      });
+    }
+
+    function render(initial = true) {
+      els.count.textContent = commands.length;
+      els.errorCount.textContent = String(window.__rednetErrors.length);
+      saveFavorites();
+      if (initial) renderQuick();
+      renderCategories();
+      renderAdminActions();
+      renderList();
+      renderPalette();
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        const area = document.createElement("textarea");
+        area.value = text;
+        area.setAttribute("readonly", "readonly");
+        area.style.position = "fixed";
+        area.style.opacity = "0";
+        document.body.appendChild(area);
+        area.select();
+        const ok = document.execCommand("copy");
+        area.remove();
+        return ok;
+      }
+    }
+
+    function commandPayload(item) {
+      return {
+        source: "rednet-miniapp",
+        type: "command",
+        id: item.id,
+        command: item.command,
+        title: item.title,
+        safety: item.safety,
+        ts: new Date().toISOString()
+      };
+    }
+
+    function secretProtocolText() {
+      return [
+        "Айрин, подготовь прием одноразового секрета.",
+        "Правила: не сохранять значение в долговременную память, не печатать его в отчетах, не переносить в документы, использовать только для указанной задачи, после выполнения забыть.",
+        "Если секрет нужен в системной команде, сначала объясни точный безопасный план и попроси подтверждение."
+      ].join("\n");
+    }
+
+    function secretPayload() {
+      const value = $("secretValue").value;
+      const purpose = $("secretPurpose").value.trim() || "задача не описана";
+      const target = $("secretTarget").value;
+      const kind = $("secretKind").value;
+      const ttl = Number($("secretTtl").value);
+      const targetLabel = ({ airin: "Айрин", aletia: "Алетия", marsel: "Марсель", manual: "получатель указан в описании" }[target] || target);
+      return {
+        source: "rednet-miniapp",
+        type: "secret_transfer",
+        id: "secret-transfer",
+        title: "Одноразовая передача секрета",
+        safety: "secret",
+        ephemeral: true,
+        ttl_seconds: ttl,
+        target,
+        secret_kind: kind,
+        message: [
+          `Одноразовый секрет для агента: ${targetLabel}.`,
+          `Тип: ${kind}.`,
+          `Срок действия: ${Math.round(ttl / 60)} минут.`,
+          `Задача: ${purpose}`,
+          "",
+          "Правила обработки: не сохранять в долговременную память, не выводить в отчетах, не пересказывать, не переносить в файлы, использовать только для этой задачи.",
+          `Значение секрета: ${value}`
+        ].join("\n"),
+        ts: new Date().toISOString()
+      };
+    }
+
+    async function sendPayload(payload, toastMessage) {
+      const text = JSON.stringify(payload);
+      try { tg?.HapticFeedback?.impactOccurred("light"); } catch {}
+      if (isTelegram() && tg?.sendData) {
+        try {
+          tg.sendData(text);
+          toast(toastMessage || "Отправлено в Telegram WebApp-контур");
+          return true;
+        } catch (error) {
+          console.warn("Telegram sendData fallback:", error);
+        }
+      }
+      await copyText(text);
+      toast("JSON-намерение скопировано. Его можно вставить в чат Hermes.");
+      return false;
+    }
+
+    async function runCommand(item) {
+      if (!item) return;
+      if (item.safety === "danger") {
+        const ok = confirm("Это админское действие с риском. MiniApp отправит только запрос на подтверждение, не выполнит действие напрямую. Продолжить?");
+        if (!ok) return;
+      }
+      await sendPayload(commandPayload(item), "Команда отправлена в Telegram WebApp-контур");
+    }
+
+    async function copyCommand(item) {
+      await copyText(item.command);
+      try { tg?.HapticFeedback?.selectionChanged(); } catch {}
+      toast(`Скопировано: ${item.title}`);
+    }
+
+    function openPalette() {
+      if (!els.palette.open) els.palette.showModal();
+      els.paletteSearch.value = "";
+      renderPalette();
+      requestAnimationFrame(() => els.paletteSearch.focus());
+    }
+
+    function closePalette() {
+      if (els.palette.open) els.palette.close();
+    }
+
+    function scrollToSecret() {
+      $("secretPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+      setTimeout(() => $("secretValue").focus(), 320);
+    }
+
+    function clearSecretForm() {
+      $("secretValue").value = "";
+      $("secretPurpose").value = "";
+      $("secretConsent").checked = false;
+    }
+
+    function toast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add("show");
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => els.toast.classList.remove("show"), 2300);
+    }
+
+    $("secretForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const value = $("secretValue").value;
+      if (!value.trim()) {
+        toast("Секрет пустой");
+        return;
+      }
+      if (!$("secretConsent").checked) {
+        toast("Нужно подтвердить правила передачи секрета");
+        return;
+      }
+      const ok = confirm("Отправить секрет агенту? MiniApp очистит поле после отправки, но секрет попадет в текущий агентский контур.");
+      if (!ok) return;
+      await sendPayload(secretPayload(), "Секрет отправлен. Поле очищено.");
+      clearSecretForm();
+    });
+
+    $("secretProtocolBtn").onclick = async () => {
+      await copyText(secretProtocolText());
+      toast("Протокол без секрета скопирован");
+    };
+    $("secretClearBtn").onclick = () => {
+      clearSecretForm();
+      toast("Секретное поле очищено");
+    };
+    addEventListener("pagehide", clearSecretForm);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") clearSecretForm();
+    });
+
+    els.search.oninput = (event) => {
+      state.query = event.target.value;
+      renderList();
+    };
+    els.paletteSearch.oninput = renderPalette;
+    document.querySelectorAll("[data-palette]").forEach((button) => button.onclick = openPalette);
+    $("closePalette").onclick = closePalette;
+    document.querySelectorAll("[data-filter]").forEach((button) => {
+      button.onclick = () => {
+        state.filter = button.dataset.filter;
+        document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("active", item === button));
+        renderList();
+      };
+    });
+    document.querySelectorAll(".bottom button[data-cat]").forEach((button) => {
+      button.onclick = () => {
+        state.category = button.dataset.cat;
+        document.querySelectorAll(".bottom button[data-cat]").forEach((item) => item.classList.toggle("active", item === button));
+        render(false);
+        if (state.category === "Секреты") scrollToSecret();
+        else scrollTo({ top: 0, behavior: "smooth" });
+      };
+    });
+    document.addEventListener("keydown", (event) => {
+      const tag = document.activeElement?.tagName;
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        openPalette();
+      }
+      if (event.key === "/" && tag !== "INPUT" && tag !== "TEXTAREA") {
+        event.preventDefault();
+        els.search.focus();
+      }
+      if (event.key === "Escape") closePalette();
+    });
+    $("statusBtn").onclick = () => copyCommand(commands.find((item) => item.id === "status"));
+    $("secretJumpBtn").onclick = scrollToSecret;
+    $("tgBtn").onclick = () => {
+      bootTelegram();
+      toast(isTelegram() ? "Telegram WebApp активен" : "Локальный режим предпросмотра");
+    };
+
+    bootTelegram();
+    render();
   </script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 # local runtime / verification files
 .tmp/
+.tmp-edge-shot-*/
+reports/
 __pycache__/
 *.pyc
 .DS_Store

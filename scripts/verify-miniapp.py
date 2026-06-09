@@ -32,16 +32,20 @@ def main() -> None:
         "https://telegram.org/js/telegram-web-app.js",
         "window.Telegram?.WebApp",
         "sendData",
-        "source:'rednet-miniapp'",
-        "type:'command'",
+        'source: "rednet-miniapp"',
+        'type: "command"',
+        'type: "secret_transfer"',
+        "secretPayload",
+        "secretClearBtn",
+        "adminActionIds",
         "safety",
     ]
     missing = [marker for marker in required if marker not in html]
     if missing:
         fail("missing required markers: " + ", ".join(missing))
 
-    command_count = len(re.findall(r"\['[a-z0-9-]+'\s*,", html))
-    if command_count < 20:
+    command_count = len(re.findall(r'\{\s*id:\s*"[a-z0-9-]+"', html))
+    if command_count < 25:
         fail(f"too few commands detected: {command_count}")
 
     scripts = re.findall(r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>", html, flags=re.S | re.I)
