@@ -1126,6 +1126,10 @@
 
   <script>
     const tg = window.Telegram?.WebApp;
+    const LOCAL_BRIDGE_URLS = [
+      "http://127.0.0.1:8792/api/command",
+      "http://localhost:8792/api/command"
+    ];
 
     const commands = [
       { id: "status", category: "Hermes", icon: "◌", title: "Статус сессии", command: "/status", description: "Показать профиль, модель, состояние сессии и базовую телеметрию.", tags: ["инфо", "безопасно"], safety: "safe" },
@@ -1488,6 +1492,14 @@
     async function sendPayload(payload, toastMessage) {
       const text = JSON.stringify(payload);
       try { tg?.HapticFeedback?.impactOccurred("light"); } catch {}
+
+      const localResult = await sendViaLocalBridge(payload);
+      if (localResult.ok) {
+        showActionResult(payload, `Доставлено через локальный bridge: ${localResult.url}`);
+        toast(toastMessage || "Команда доставлена Айрин");
+        return true;
+      }
+
       if (isTelegram() && tg?.sendData) {
         try {
           tg.sendData(text);
@@ -1499,9 +1511,28 @@
         }
       }
       await copyText(text);
-      showActionResult(payload, "Telegram WebApp недоступен: JSON-намерение скопировано в буфер для ручной вставки.");
-      toast("JSON-намерение скопировано. Его можно вставить в чат Hermes.");
+      showActionResult(payload, `НЕ ДОСТАВЛЕНО. Локальный bridge недоступен (${localResult.error || "нет ответа"}), Telegram WebApp не подтвердил доставку. JSON скопирован в буфер.`);
+      toast("Не доставлено: JSON скопирован");
       return false;
+    }
+
+    async function sendViaLocalBridge(payload) {
+      for (const url of LOCAL_BRIDGE_URLS) {
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            mode: "cors"
+          });
+          const body = await response.json().catch(() => ({}));
+          if (response.ok && body.ok) return { ok: true, url, body };
+          return { ok: false, url, error: body.error || `HTTP ${response.status}` };
+        } catch (error) {
+          // Пробуем следующий локальный адрес.
+        }
+      }
+      return { ok: false, error: "127.0.0.1:8792 не отвечает" };
     }
 
     async function runCommand(item) {

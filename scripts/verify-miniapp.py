@@ -49,6 +49,9 @@ def main() -> None:
         "adminActionIds",
         "actionResult",
         "openLocalChat",
+        "sendViaLocalBridge",
+        "LOCAL_BRIDGE_URLS",
+        "НЕ ДОСТАВЛЕНО",
         "local-chat/server.py",
         "safety",
     ]

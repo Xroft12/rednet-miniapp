@@ -46,6 +46,9 @@ class LocalChatHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         path = urlparse(self.path).path
+        if path == "/api/command":
+            self.handle_command()
+            return
         if path.startswith(PROXY_PREFIXES):
             self.proxy()
             return
@@ -102,6 +105,39 @@ class LocalChatHandler(BaseHTTPRequestHandler):
         except URLError as error:
             self.send_json(502, {"ok": False, "error": f"target unavailable: {error.reason}"})
 
+    def handle_command(self) -> None:
+        try:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            raw = self.rfile.read(length) if length else b"{}"
+            payload = json.loads(raw.decode("utf-8"))
+            text = command_to_text(payload)
+            data = json.dumps({
+                "conversation_id": "local-default",
+                "text": text,
+            }, ensure_ascii=False).encode("utf-8")
+            request = Request(
+                urljoin(self.target.rstrip("/") + "/", "api/chat"),
+                data=data,
+                method="POST",
+                headers={"Content-Type": "application/json"},
+            )
+            with urlopen(request, timeout=10) as response:
+                response.read()
+            self.send_json(200, {
+                "ok": True,
+                "delivered": True,
+                "target": self.target,
+                "mode": "local-bridge",
+                "text_preview": text[:240],
+            })
+        except Exception as error:
+            self.send_json(502, {
+                "ok": False,
+                "delivered": False,
+                "mode": "local-bridge",
+                "error": str(error),
+            })
+
     def send_json(self, status: int, payload: dict[str, object]) -> None:
         data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
@@ -109,6 +145,25 @@ class LocalChatHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
+
+
+def command_to_text(payload: dict[str, object]) -> str:
+    kind = str(payload.get("type") or "")
+    if kind == "command":
+        title = str(payload.get("title") or "Команда MiniApp")
+        command = str(payload.get("command") or "").strip()
+        safety = str(payload.get("safety") or "safe")
+        return "\n".join([
+            f"MiniApp: {title}",
+            f"Безопасность: {safety}",
+            "",
+            command,
+        ]).strip()
+    if kind == "secret_transfer":
+        return str(payload.get("message") or "").strip()
+    if kind == "local_chat_open":
+        return "MiniApp запросил открыть локальный чат Айрин."
+    return json.dumps(payload, ensure_ascii=False, indent=2)
 
 
 def main() -> None:
