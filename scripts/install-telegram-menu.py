@@ -93,43 +93,62 @@ def telegram_api(token: str, method: str, payload: dict[str, Any]) -> dict[str, 
     return parsed
 
 
+def safe_menu_result(menu: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "type": menu.get("type"),
+        "text": menu.get("text"),
+        "url": (menu.get("web_app") or {}).get("url"),
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Install RedNET MiniApp as Telegram bot menu button")
-    parser.add_argument("url", help="public HTTPS URL of the MiniApp")
+    parser.add_argument("url", nargs="?", help="public HTTPS URL of the MiniApp")
     parser.add_argument("--text", default="Айрин ♥ RedNET", help="button text")
     parser.add_argument("--chat-id", default="", help="optional Telegram chat_id for chat-specific menu button")
+    parser.add_argument(
+        "--reset-default",
+        action="store_true",
+        help="first restore the global/default bot menu button so MiniApp is not shown to everyone",
+    )
     args = parser.parse_args()
 
-    if not args.url.startswith("https://"):
+    if args.url and not args.url.startswith("https://"):
         raise SystemExit("MiniApp URL must start with https://")
+    if not args.url and not args.reset_default:
+        parser.error("url is required unless --reset-default is used")
 
     token = get_token()
-    payload: dict[str, Any] = {
-        "menu_button": {
-            "type": "web_app",
-            "text": args.text,
-            "web_app": {"url": args.url},
+    result: dict[str, Any] = {}
+
+    if args.reset_default:
+        telegram_api(token, "setChatMenuButton", {"menu_button": {"type": "default"}})
+        default_verified = telegram_api(token, "getChatMenuButton", {})["result"]
+        result["default"] = safe_menu_result(default_verified)
+
+    if args.url:
+        payload: dict[str, Any] = {
+            "menu_button": {
+                "type": "web_app",
+                "text": args.text,
+                "web_app": {"url": args.url},
+            }
         }
-    }
-    verify_payload: dict[str, Any] = {}
-    if args.chat_id:
-        try:
-            chat_id: int | str = int(args.chat_id)
-        except ValueError:
-            chat_id = args.chat_id
-        payload["chat_id"] = chat_id
-        verify_payload["chat_id"] = chat_id
+        verify_payload: dict[str, Any] = {}
+        if args.chat_id:
+            try:
+                chat_id: int | str = int(args.chat_id)
+            except ValueError:
+                chat_id = args.chat_id
+            payload["chat_id"] = chat_id
+            verify_payload["chat_id"] = chat_id
 
-    telegram_api(token, "setChatMenuButton", payload)
-    verified = telegram_api(token, "getChatMenuButton", verify_payload)["result"]
+        telegram_api(token, "setChatMenuButton", payload)
+        verified = telegram_api(token, "getChatMenuButton", verify_payload)["result"]
+        result["chat" if args.chat_id else "default"] = safe_menu_result(verified)
 
-    safe_result = {
-        "type": verified.get("type"),
-        "text": verified.get("text"),
-        "url": (verified.get("web_app") or {}).get("url"),
-    }
-    print("OK: Telegram bot menu button installed")
-    print(json.dumps(safe_result, ensure_ascii=False, indent=2))
+    print("OK: Telegram bot menu button updated")
+    print(json.dumps(result, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

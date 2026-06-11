@@ -837,6 +837,86 @@
       border-radius: 26px;
     }
 
+    .network-panel {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 26px;
+    }
+
+    .network-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(330px, 1.08fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .presence-card, .nmap-card {
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .058), rgba(255, 255, 255, .024));
+    }
+
+    .presence-lines {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .presence-line {
+      display: grid;
+      grid-template-columns: minmax(112px, .46fr) minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      min-height: 42px;
+      padding: 9px 10px;
+      border: 1px solid rgba(255, 255, 255, .065);
+      border-radius: 14px;
+      background: rgba(7, 9, 13, .34);
+    }
+
+    .presence-line small {
+      color: var(--faint);
+      font-size: 12px;
+    }
+
+    .presence-line strong {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      color: #eaf2ff;
+    }
+
+    .network-actions, .nmap-actions, .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .nmap-form {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .nmap-form .textarea { min-height: 74px; }
+
+    .scan-guard {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      color: #cbd6e6;
+      font-size: 13px;
+      line-height: 1.42;
+    }
+
+    .scan-guard input { margin-top: 2px; }
+
     .action-output h2 {
       margin: 0;
       font-size: 18px;
@@ -921,7 +1001,7 @@
         min-height: auto;
         overflow: hidden;
       }
-      .quick, .list, .admin-actions, .secret-actions, .field-grid, .action-output { grid-template-columns: 1fr; }
+      .quick, .list, .admin-actions, .secret-actions, .field-grid, .action-output, .network-grid { grid-template-columns: 1fr; }
       .categories {
         display: flex;
         overflow-x: auto;
@@ -936,10 +1016,10 @@
       .chip { flex: 1; }
       .bottom {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         left: 50%;
         right: auto;
-        width: min(350px, calc(100vw - 16px));
+        width: min(390px, calc(100vw - 16px));
         max-width: calc(100vw - 16px);
         transform: translateX(-50%);
       }
@@ -997,6 +1077,110 @@
       </section>
 
       <section class="quick" id="quick"></section>
+
+      <section class="network-panel glass hidden" id="networkPanel" aria-live="polite">
+        <div class="section-head">
+          <div>
+            <h2>Сетевые манипуляции</h2>
+            <p>Присутствие Айрин по IP и безопасная nmap-панель: MiniApp отправляет намерение, а скан выполняется только агентом и только в разрешённом scope.</p>
+          </div>
+          <span class="badge safe">observe + nmap</span>
+        </div>
+        <div class="network-grid">
+          <article class="presence-card">
+            <div class="section-head">
+              <div>
+                <h3>Текущее присутствие</h3>
+                <p class="muted">Здесь MiniApp показывает видимый IP/режим клиента. Для IP машины Айрин нажми «Оглядеться агентом» — она проверит hostname, LAN/Tailscale и скажет, где сейчас должна быть.</p>
+              </div>
+              <span class="badge safe">read-only</span>
+            </div>
+            <div class="presence-lines">
+              <div class="presence-line"><small>режим</small><strong id="presenceMode">ожидаю вкладку</strong></div>
+              <div class="presence-line"><small>публичный IP</small><strong id="presencePublicIp">не проверен</strong></div>
+              <div class="presence-line"><small>платформа</small><strong id="presencePlatform">неизвестно</strong></div>
+              <div class="presence-line"><small>local bridge</small><strong id="presenceBridge">не проверен</strong></div>
+              <div class="presence-line"><small>обновлено</small><strong id="presenceUpdated">—</strong></div>
+            </div>
+            <div class="network-actions">
+              <button class="send" id="presenceRefreshBtn" type="button">Оглядеться в MiniApp</button>
+              <button class="copy" id="presenceAskBtn" type="button">Оглядеться агентом</button>
+            </div>
+          </article>
+
+          <article class="nmap-card">
+            <div class="section-head">
+              <div>
+                <h3>Nmap-сканер</h3>
+                <p class="muted">Удобная форма для совместной работы: цель, порты, профиль и узел запуска. Агрессивные NSE/vuln/brute-force режимы здесь не используются.</p>
+              </div>
+              <span class="badge warn">allowlist</span>
+            </div>
+            <form class="nmap-form" id="nmapForm">
+              <div class="field-grid">
+                <div class="field">
+                  <label for="nmapTarget">Цель / диапазон</label>
+                  <input class="input" id="nmapTarget" name="target" autocomplete="off" value="192.168.3.0/24" placeholder="192.168.3.0/24 или 192.168.3.22" />
+                </div>
+                <div class="field">
+                  <label for="nmapPorts">Порты</label>
+                  <input class="input" id="nmapPorts" name="ports" autocomplete="off" value="22,80,443,445,8123,8080,8792" placeholder="22,80,443 или пусто для discovery" />
+                </div>
+              </div>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="nmapProfile">Профиль</label>
+                  <select class="select" id="nmapProfile" name="profile">
+                    <option value="lan-discovery">LAN discovery: -sn -n --reason</option>
+                    <option value="single-host-ports">Один хост: -sT -Pn выбранные порты</option>
+                    <option value="known-services">Known services RedNET</option>
+                    <option value="tailnet-known">Tailnet известные узлы</option>
+                    <option value="custom-safe">Custom safe read-only</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="nmapMode">Режим</label>
+                  <select class="select" id="nmapMode" name="mode">
+                    <option value="observe-first">Сначала показать команду</option>
+                    <option value="safe-run">Выполнить мягкий read-only allowlist</option>
+                    <option value="service-light">Версии: --version-light только на портах</option>
+                    <option value="trace-route">Маршрут: --traceroute для одного узла</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="nmapSource">Где запускать</label>
+                  <select class="select" id="nmapSource" name="source">
+                    <option value="auto">Авто: пусть Айрин выберет лучший узел</option>
+                    <option value="airin">Ubuntu airin / LAN</option>
+                    <option value="windows">Windows Hermes host</option>
+                    <option value="tailnet">Tailnet-проверка</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="nmapExtra">Комментарий</label>
+                  <input class="input" id="nmapExtra" name="extra" autocomplete="off" placeholder="например: найти камеру или проверить NAS" />
+                </div>
+              </div>
+              <label class="scan-guard">
+                <input id="nmapGuard" type="checkbox" checked />
+                <span>Только read-only скан в RedNET/LAN/Tailnet allowlist; если цель внешняя или режим спорный — Айрин сначала просит подтверждение.</span>
+              </label>
+              <div class="preset-row">
+                <button class="copy" data-nmap-preset="lan" type="button">LAN discovery</button>
+                <button class="copy" data-nmap-preset="host" type="button">Один хост</button>
+                <button class="copy" data-nmap-preset="tailnet" type="button">Tailnet</button>
+                <button class="copy" data-nmap-preset="services" type="button">RedNET ports</button>
+              </div>
+              <div class="nmap-actions">
+                <button class="send" id="nmapSendBtn" type="submit">Отправить запрос nmap</button>
+                <button class="copy" id="nmapCopyBtn" type="button">Копировать запрос</button>
+              </div>
+            </form>
+          </article>
+        </div>
+      </section>
 
       <section class="action-output glass" id="actionOutput">
         <div>
@@ -1102,6 +1286,7 @@
     <nav class="bottom glass">
       <button data-cat="Главная" class="active" type="button">⌂<span>Главная</span></button>
       <button data-cat="Админка" type="button">▣<span>Админ</span></button>
+      <button data-cat="Сетевые манипуляции" type="button">⌬<span>Сеть</span></button>
       <button data-cat="Секреты" type="button">●<span>Секрет</span></button>
       <button data-palette type="button">⌘<span>Поиск</span></button>
     </nav>
@@ -1148,6 +1333,10 @@
       { id: "background", category: "Автоматизация", icon: "⇢", title: "Фоновая задача", command: "/background ", description: "Шаблон запуска фоновой задачи. После команды допиши точный запрос.", tags: ["шаблон"], safety: "caution" },
       { id: "queue", category: "Автоматизация", icon: "☰", title: "Очередь", command: "/queue ", description: "Поставить следующий запрос в очередь без перебивания текущей работы.", tags: ["очередь"], safety: "safe" },
       { id: "kanban", category: "Автоматизация", icon: "▤", title: "Kanban", command: "/kanban tasks", description: "Открыть очередь многопрофильной работы, если доска включена.", tags: ["команда"], safety: "safe" },
+      { id: "network-presence", category: "Сетевые манипуляции", icon: "◉", title: "Оглядеться по IP", command: "Айрин, оглядись по сети в observe-only: назови текущий hostname, LAN-IP, Tailscale-IP, публичный egress, доступность nmap и с какого узла безопаснее сейчас присутствовать. Ничего не меняй.", description: "Просит Айрин определить, где она сейчас находится и какой IP/маршрут видит.", tags: ["ip", "присутствие", "observe"], safety: "safe" },
+      { id: "nmap-lan-discovery", category: "Сетевые манипуляции", icon: "⌬", title: "Nmap LAN discovery", command: "Айрин, выполни мягкий LAN discovery по allowlist 192.168.3.0/24: nmap -sn -n --reason --max-retries 1 --host-timeout 20s 192.168.3.0/24. Лучше с airin, если он видит LAN. Затем сопоставь с ARP/neigh, без MAC в публичном отчёте.", description: "Безопасно найти живые узлы домашней LAN.", tags: ["nmap", "lan", "read-only"], safety: "safe" },
+      { id: "nmap-host-ports", category: "Сетевые манипуляции", icon: "▥", title: "Nmap порты хоста", command: "Айрин, подготовь мягкий nmap TCP connect scan одного разрешённого хоста. Сначала уточни/используй цель из формы MiniApp; без -A, vuln/brute NSE и изменения маршрутов.", description: "Шаблон для проверки выбранных портов одного узла.", tags: ["nmap", "ports"], safety: "safe" },
+      { id: "nmap-tailnet", category: "Сетевые манипуляции", icon: "◇", title: "Nmap Tailnet", command: "Айрин, проверь известные Tailnet-узлы мягким профилем nmap по allowlist: 100.75.255.59 и 100.95.151.17, только нужные сервисные порты, без агрессивных NSE.", description: "Проверка Tailscale-плоскости RedNET.", tags: ["nmap", "tailscale"], safety: "safe" },
       { id: "admin-status", category: "Админка", icon: "▣", title: "Сводка gateway", command: "Айрин, дай операторскую сводку: gateway, Telegram, OAuth, очередь, MiniApp, без секретов.", description: "Админский запрос состояния без перезапусков и без раскрытия токенов.", tags: ["админ", "статус"], safety: "safe" },
       { id: "admin-logs", category: "Админка", icon: "▥", title: "Последние ошибки", command: "Айрин, покажи последние ошибки gateway и Telegram кратко, без токенов и приватных значений.", description: "Просит Айрин собрать короткую диагностику логов.", tags: ["логи"], safety: "safe" },
       { id: "admin-queue", category: "Админка", icon: "▤", title: "Очереди и фоновые задачи", command: "Айрин, проверь очереди, фоновые задачи и зависшие сессии. Ничего не перезапускай.", description: "Операторская проверка очередей в режиме наблюдения.", tags: ["очередь"], safety: "safe" },
@@ -1209,7 +1398,20 @@
       errorCount: $("errorCount"),
       adminActions: $("adminActions"),
       actionResult: $("actionResult"),
-      actionHint: $("actionHint")
+      actionHint: $("actionHint"),
+      networkPanel: $("networkPanel"),
+      presenceMode: $("presenceMode"),
+      presencePublicIp: $("presencePublicIp"),
+      presencePlatform: $("presencePlatform"),
+      presenceBridge: $("presenceBridge"),
+      presenceUpdated: $("presenceUpdated"),
+      nmapTarget: $("nmapTarget"),
+      nmapPorts: $("nmapPorts"),
+      nmapProfile: $("nmapProfile"),
+      nmapMode: $("nmapMode"),
+      nmapSource: $("nmapSource"),
+      nmapExtra: $("nmapExtra"),
+      nmapGuard: $("nmapGuard")
     };
 
     function isTelegram() {
@@ -1268,6 +1470,7 @@
         ["Чат", "локальный резерв", "◈", "local-chat"],
         ["Позвать", "пинг Айрин", "↗", "call-airin"],
         ["Выгрузки", "статус и нить", "⇩", "exports"],
+        ["Сеть", "IP и nmap", "⌬", "network-panel"],
         ["Админка", "логи и очереди", "▣", "admin-status"],
         ["Секрет", "одноразовая передача", "●", "secret-panel"],
         ["Поиск", "командная строка", "⌘", "palette"]
@@ -1282,6 +1485,7 @@
           if (id === "palette") return openPalette();
           if (id === "secret-panel") return scrollToSecret();
           if (id === "local-chat") return openLocalChat();
+          if (id === "network-panel") return openNetworkPanel();
           runCommand(commands.find((item) => item.id === id));
         };
         els.quick.appendChild(button);
@@ -1299,6 +1503,10 @@
           state.category = name;
           document.querySelectorAll(".bottom button[data-cat]").forEach((item) => item.classList.toggle("active", item.dataset.cat === name));
           render(false);
+          if (name === "Сетевые манипуляции") {
+            els.networkPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+            refreshNetworkPresence();
+          }
         };
         els.categories.appendChild(button);
       });
@@ -1396,6 +1604,183 @@
       renderAdminActions();
       renderList();
       renderPalette();
+      syncNetworkPanel();
+    }
+
+    function syncNetworkPanel() {
+      const active = state.category === "Сетевые манипуляции";
+      els.networkPanel?.classList.toggle("hidden", !active);
+      if (active && !syncNetworkPanel.didInitialRefresh) {
+        syncNetworkPanel.didInitialRefresh = true;
+        refreshNetworkPresence();
+      }
+    }
+
+    function openNetworkPanel() {
+      state.category = "Сетевые манипуляции";
+      document.querySelectorAll(".bottom button[data-cat]").forEach((item) => item.classList.toggle("active", item.dataset.cat === state.category));
+      render(false);
+      els.networkPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+      refreshNetworkPresence();
+    }
+
+    function networkSnapshot() {
+      return {
+        mode: els.presenceMode?.textContent || "unknown",
+        public_ip: els.presencePublicIp?.textContent || "unknown",
+        platform: els.presencePlatform?.textContent || "unknown",
+        bridge: els.presenceBridge?.textContent || "unknown",
+        updated: els.presenceUpdated?.textContent || "unknown"
+      };
+    }
+
+    async function fetchWithTimeout(url, timeoutMs = 2600, asJson = true) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const response = await fetch(url, { cache: "no-store", signal: controller.signal });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return asJson ? await response.json() : await response.text();
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function resolvePublicIp() {
+      const sources = [
+        "https://api64.ipify.org?format=json",
+        "https://api.ipify.org?format=json"
+      ];
+      for (const url of sources) {
+        try {
+          const body = await fetchWithTimeout(url, 3200, true);
+          if (body?.ip) return body.ip;
+        } catch {}
+      }
+      return "не определён";
+    }
+
+    async function refreshNetworkPresence() {
+      els.presenceMode.textContent = isTelegram() ? "Telegram WebApp" : "локальный браузер";
+      els.presencePlatform.textContent = tg?.platform || navigator.platform || "unknown";
+      els.presenceUpdated.textContent = new Date().toLocaleString("ru-RU");
+      els.presencePublicIp.textContent = "проверка…";
+      els.presenceBridge.textContent = "проверка…";
+      try { tg?.HapticFeedback?.selectionChanged(); } catch {}
+
+      const [ipResult, bridgeResult] = await Promise.allSettled([
+        resolvePublicIp(),
+        fetchWithTimeout("http://127.0.0.1:8792/", 1600, false)
+      ]);
+      els.presencePublicIp.textContent = ipResult.status === "fulfilled" ? ipResult.value : "не определён";
+      els.presenceBridge.textContent = bridgeResult.status === "fulfilled" ? "127.0.0.1:8792 доступен" : "нет локального bridge";
+      els.presenceUpdated.textContent = new Date().toLocaleString("ru-RU");
+      toast("Сетевое присутствие обновлено");
+    }
+
+    function presenceCommandText() {
+      const snap = networkSnapshot();
+      return [
+        "Айрин, вкладка MiniApp «Сетевые манипуляции» просит оглядеться по сети.",
+        "Работай observe-only: ничего не перезапускай, не меняй маршруты/VPN/firewall.",
+        "Определи, на какой машине сейчас активен твой контур: hostname, LAN IPv4, Tailscale IPv4, публичный egress, доступен ли nmap и какой узел лучше выбрать для присутствия/скана.",
+        "Если не уверена, прямо уточни у Ивана, на какой машине нужно присутствовать.",
+        "",
+        "Контекст, который видит MiniApp:",
+        `- режим: ${snap.mode}`,
+        `- публичный IP клиента MiniApp: ${snap.public_ip}`,
+        `- платформа клиента: ${snap.platform}`,
+        `- local bridge: ${snap.bridge}`,
+        `- обновлено: ${snap.updated}`
+      ].join("\n");
+    }
+
+    async function askAgentPresence() {
+      const payload = {
+        source: "rednet-miniapp",
+        type: "command",
+        id: "network-presence-request",
+        command: presenceCommandText(),
+        title: "Оглядеться по сети и IP",
+        safety: "safe",
+        network_presence: networkSnapshot(),
+        ts: new Date().toISOString()
+      };
+      await sendPayload(payload, "Запрос присутствия отправлен Айрин");
+    }
+
+    function applyNmapPreset(kind) {
+      const presets = {
+        lan: { target: "192.168.3.0/24", ports: "", profile: "lan-discovery", mode: "safe-run", source: "airin", extra: "мягко найти живые устройства LAN" },
+        host: { target: "192.168.3.22", ports: "22,80,443,8123,8080,8792", profile: "single-host-ports", mode: "observe-first", source: "auto", extra: "проверить выбранный хост" },
+        tailnet: { target: "100.75.255.59 100.95.151.17", ports: "22,80,443,8123,8080,8792", profile: "tailnet-known", mode: "observe-first", source: "tailnet", extra: "проверить известные Tailnet-узлы" },
+        services: { target: "192.168.3.22 100.75.255.59 100.95.151.17", ports: "22,80,443,8123,8080,9090,5678,8645,8791,8792,8793,18555", profile: "known-services", mode: "observe-first", source: "auto", extra: "проверить сервисные порты RedNET" }
+      };
+      const preset = presets[kind];
+      if (!preset) return;
+      els.nmapTarget.value = preset.target;
+      els.nmapPorts.value = preset.ports;
+      els.nmapProfile.value = preset.profile;
+      els.nmapMode.value = preset.mode;
+      els.nmapSource.value = preset.source;
+      els.nmapExtra.value = preset.extra;
+      toast("Nmap-пресет заполнен");
+    }
+
+    function nmapRequestPayload() {
+      const target = els.nmapTarget.value.trim();
+      const ports = els.nmapPorts.value.trim();
+      const profile = els.nmapProfile.value;
+      const mode = els.nmapMode.value;
+      const source = els.nmapSource.value;
+      const extra = els.nmapExtra.value.trim();
+      const guard = Boolean(els.nmapGuard.checked);
+      if (!target) {
+        toast("Укажи цель для nmap");
+        return null;
+      }
+      const profileLabel = els.nmapProfile.selectedOptions[0]?.textContent || profile;
+      const modeLabel = els.nmapMode.selectedOptions[0]?.textContent || mode;
+      const sourceLabel = els.nmapSource.selectedOptions[0]?.textContent || source;
+      const command = [
+        "Айрин, это запрос из MiniApp / Сетевые манипуляции / nmap.",
+        "Сначала проверь scope и выбери безопасный узел запуска. Не используй -A, --script vuln, brute-force/exploit NSE, spoof/decoy/evasion. Маршруты/VPN/firewall не меняй.",
+        guard ? "Если цель в RedNET allowlist (LAN 192.168.3.0/24, Tailnet 100.64.0.0/10, localhost, известные узлы) — можно выполнить мягкий read-only профиль. Если цель внешняя или спорная — сначала остановись и попроси подтверждение Ивана." : "Guard снят в форме, но всё равно не выполняй спорный или внешний скан без явного подтверждения Ивана.",
+        "",
+        `Цель: ${target}`,
+        `Порты: ${ports || "не указаны / discovery"}`,
+        `Профиль: ${profileLabel}`,
+        `Режим: ${modeLabel}`,
+        `Где запускать: ${sourceLabel}`,
+        extra ? `Комментарий: ${extra}` : "Комментарий: —",
+        "",
+        "В отчёте покажи: команду nmap, где запускала, открытые порты/hosts, что означает результат, и что требует отдельной проверки."
+      ].join("\n");
+      return {
+        source: "rednet-miniapp",
+        type: "command",
+        id: "nmap-scan-request",
+        command,
+        title: "Nmap scan request",
+        safety: guard ? "safe" : "caution",
+        nmap: { target, ports, profile, mode, source, guard, extra },
+        network_presence: networkSnapshot(),
+        ts: new Date().toISOString()
+      };
+    }
+
+    async function sendNmapRequest() {
+      const payload = nmapRequestPayload();
+      if (!payload) return;
+      await sendPayload(payload, "Nmap-запрос отправлен Айрин");
+    }
+
+    async function copyNmapRequest() {
+      const payload = nmapRequestPayload();
+      if (!payload) return;
+      await copyText(payload.command);
+      showActionResult(payload, "Nmap-запрос скопирован как текст и JSON показан ниже.");
+      toast("Nmap-запрос скопирован");
     }
 
     async function copyText(text) {
@@ -1630,6 +2015,10 @@
         document.querySelectorAll(".bottom button[data-cat]").forEach((item) => item.classList.toggle("active", item === button));
         render(false);
         if (state.category === "Секреты") scrollToSecret();
+        else if (state.category === "Сетевые манипуляции") {
+          els.networkPanel?.scrollIntoView({ behavior: "smooth", block: "start" });
+          refreshNetworkPresence();
+        }
         else scrollTo({ top: 0, behavior: "smooth" });
       };
     });
@@ -1648,6 +2037,16 @@
     $("statusBtn").onclick = () => copyCommand(commands.find((item) => item.id === "status"));
     $("secretJumpBtn").onclick = scrollToSecret;
     $("localChatBtn").onclick = openLocalChat;
+    $("presenceRefreshBtn").onclick = refreshNetworkPresence;
+    $("presenceAskBtn").onclick = askAgentPresence;
+    $("nmapForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await sendNmapRequest();
+    });
+    $("nmapCopyBtn").onclick = copyNmapRequest;
+    document.querySelectorAll("[data-nmap-preset]").forEach((button) => {
+      button.onclick = () => applyNmapPreset(button.dataset.nmapPreset);
+    });
     $("resultCopyBtn").onclick = async () => {
       await copyText(lastPayloadText || "");
       toast(lastPayloadText ? "Последний JSON скопирован" : "Пока нечего копировать");

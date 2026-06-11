@@ -16,7 +16,7 @@ python local-chat/server.py --port 8792 --target http://127.0.0.1:8790
 
 - мобильный тёмный UI в стиле RedNET operator center;
 - поиск команд и сценариев;
-- категории: Hermes, Настройки, Автоматизация, Админка, Секреты, RedNET, Дом, Работа, Медиа;
+- категории: Hermes, Настройки, Автоматизация, Сетевые манипуляции, Админка, Секреты, RedNET, Дом, Работа, Медиа;
 - отдельный админский блок: gateway, логи, очереди, сеть, MiniApp, Docker-агенты, локальный резерв, портал, публикация VK/Google;
 - безопасная передача одноразового секрета агенту с TTL, целью, типом, подтверждением и очисткой формы;
 - избранное через `localStorage`;
@@ -111,10 +111,14 @@ node scripts/verify-buttons-cdp.mjs
 Нужен публичный HTTPS URL MiniApp. После деплоя:
 
 ```bash
-python scripts/install-telegram-menu.py https://xroft12.github.io/rednet-miniapp/
+# Поставить MiniApp только Ивану и убрать глобальную кнопку у остальных:
+python scripts/install-telegram-menu.py https://xroft12.github.io/rednet-miniapp/ --chat-id 196234280 --reset-default
+
+# Только сбросить глобальную кнопку MiniApp для всех чатов:
+python scripts/install-telegram-menu.py --reset-default
 ```
 
-Скрипт берёт `TELEGRAM_BOT_TOKEN` только из окружения или Hermes `.env`, не печатает токен, вызывает Telegram Bot API `setChatMenuButton`, затем проверяет через `getChatMenuButton`.
+Скрипт берёт `TELEGRAM_BOT_TOKEN` только из окружения или Hermes `.env`, не печатает токен, вызывает Telegram Bot API `setChatMenuButton`, затем проверяет через `getChatMenuButton`. Если указан `--reset-default`, глобальная кнопка возвращается к стандартной, а MiniApp можно оставить как chat-specific кнопку только для Ивана.
 
 ## Деплой на GitHub Pages
 
