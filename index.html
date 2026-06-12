@@ -1357,6 +1357,28 @@
           <div class="admin-actions" id="adminActions"></div>
         </article>
 
+        <article class="admin-card glass" id="accessPanel">
+          <div class="section-head">
+            <div>
+              <h2>Доступ, пароль и FaceID</h2>
+              <p>Owner-only контур: frontend показывает кнопки, но не хранит пароль/биометрию. Backend обязан повторно проверить signed Telegram initData и user_id Ивана.</p>
+            </div>
+            <span class="badge warn" id="accessBadge">owner-only</span>
+          </div>
+          <div class="presence-lines">
+            <div class="presence-line"><small>Telegram ID</small><strong id="accessUserId">не проверен</strong></div>
+            <div class="presence-line"><small>статус</small><strong id="accessStatus">ожидаю Telegram initData</strong></div>
+            <div class="presence-line"><small>FaceID</small><strong id="accessBiometry">только Telegram BiometricManager</strong></div>
+            <div class="presence-line"><small>backend gate</small><strong>server-side initData + allowlist 196234280</strong></div>
+          </div>
+          <div class="network-actions">
+            <button class="send" id="passwordSetupBtn" type="button">Пароль MiniApp</button>
+            <button class="copy" id="faceIdBtn" type="button">FaceID / TouchID</button>
+            <button class="secondary" id="accessCheckBtn" type="button">Проверить доступ</button>
+          </div>
+          <p class="locked-note" id="accessNote">Если MiniApp открыт не из приватного Telegram-чата Ивана, привилегированные intents блокируются уже во frontend.</p>
+        </article>
+
         <article class="admin-card glass" id="secretPanel">
           <div class="section-head">
             <div>
@@ -1465,6 +1487,8 @@
 
   <script>
     const tg = window.Telegram?.WebApp;
+    const OWNER_TELEGRAM_ID = "196234280";
+    const OWNER_MENU_URL = "https://xroft12.github.io/rednet-miniapp/";
     const LOCAL_BRIDGE_URLS = [
       "http://127.0.0.1:8792/api/command",
       "http://localhost:8792/api/command"
@@ -1496,6 +1520,8 @@
       { id: "admin-queue", category: "Админка", icon: "▤", title: "Очереди и фоновые задачи", command: "Айрин, проверь очереди, фоновые задачи и зависшие сессии. Ничего не перезапускай.", description: "Операторская проверка очередей в режиме наблюдения.", tags: ["очередь"], safety: "safe" },
       { id: "admin-network", category: "Админка", icon: "⌬", title: "Сеть observe", command: "Айрин, безопасно проверь сеть Telegram/OpenAI/OAuth в режиме observe-only. Маршруты и VPN не меняй.", description: "Диагностика сети без изменения маршрутов.", tags: ["сеть", "observe"], safety: "safe" },
       { id: "admin-miniapp", category: "Админка", icon: "◫", title: "Проверка MiniApp", command: "Айрин, проверь MiniApp: меню Telegram, web_app_data, безопасные команды, без перезапуска gateway.", description: "Проверка интеграции MiniApp и Telegram WebApp.", tags: ["miniapp"], safety: "safe" },
+      { id: "account-password-bootstrap", category: "Доступ", icon: "🔐", title: "Пароль MiniApp", command: "Айрин, создай owner-only backend-flow для установки или сброса пароля MiniApp. Не принимай пароль во frontend, проверь signed Telegram initData и user_id 196234280, затем запроси отдельное подтверждение Ивана.", description: "Owner-only intent для пароля; само значение пароля не хранится и не вводится в MiniApp.", tags: ["доступ", "пароль", "owner-only"], safety: "danger", ownerOnly: true },
+      { id: "account-faceid-bootstrap", category: "Доступ", icon: "◎", title: "FaceID / TouchID", command: "Айрин, подготовь owner-only привязку FaceID/TouchID через Telegram BiometricManager или backend passkey/WebAuthn flow. Не сохраняй biometric tokens во frontend.", description: "Owner-only intent для биометрии; токены не попадают в localStorage, preview или логи.", tags: ["доступ", "faceid", "biometry"], safety: "caution", ownerOnly: true },
       { id: "admin-docker", category: "Админка", icon: "▧", title: "Docker-агенты", command: "Айрин, покажи монитор Docker-агентов: имя, состояние, порт, последние ошибки. Ничего не перезапускай без подтверждения.", description: "Операторский запрос статуса контейнеров и изолированных агентов.", tags: ["docker", "агенты"], safety: "safe" },
       { id: "admin-local-chat", category: "Админка", icon: "◈", title: "Локальный резерв", command: "Айрин, проверь локальный резервный чат и скажи, готов ли он принять сообщение при деградации Telegram.", description: "Контроль запасного канала связи без вмешательства в сеть.", tags: ["резерв", "чат"], safety: "safe" },
       { id: "admin-portal", category: "Админка", icon: "▨", title: "Портал RedNET", command: "Айрин, дай статус портала RedNET: разделы, доступность, последние ошибки, что требует ручной проверки.", description: "Сводка по порталу и админским панелям.", tags: ["портал"], safety: "safe" },
@@ -1571,11 +1597,190 @@
       scaleMinus: $("scaleMinus"),
       scalePlus: $("scalePlus"),
       scaleRange: $("scaleRange"),
-      scaleValue: $("scaleValue")
+      scaleValue: $("scaleValue"),
+      accessBadge: $("accessBadge"),
+      accessUserId: $("accessUserId"),
+      accessStatus: $("accessStatus"),
+      accessBiometry: $("accessBiometry"),
+      accessNote: $("accessNote"),
+      passwordSetupBtn: $("passwordSetupBtn"),
+      faceIdBtn: $("faceIdBtn"),
+      accessCheckBtn: $("accessCheckBtn")
     };
 
     function isTelegram() {
       return Boolean(tg && (tg.initData || (tg.initDataUnsafe && Object.keys(tg.initDataUnsafe).length) || (tg.platform && tg.platform !== "unknown")));
+    }
+
+    function telegramUser() {
+      return tg?.initDataUnsafe?.user || null;
+    }
+
+    function telegramUserId() {
+      const id = telegramUser()?.id;
+      return id === undefined || id === null ? "" : String(id);
+    }
+
+    function isOwnerContext() {
+      return Boolean(tg?.initData) && telegramUserId() === String(OWNER_TELEGRAM_ID);
+    }
+
+    function biometricManager() {
+      return tg?.BiometricManager || tg?.biometricManager || null;
+    }
+
+    function updateAccessPanel() {
+      const userId = telegramUserId();
+      const owner = isOwnerContext();
+      const inTelegram = isTelegram();
+      const bm = biometricManager();
+
+      if (els.accessUserId) els.accessUserId.textContent = userId || (inTelegram ? "нет user.id" : "нет Telegram initData");
+      if (els.accessStatus) {
+        els.accessStatus.textContent = owner
+          ? "Иван подтверждён во frontend; backend всё равно обязан проверить initData"
+          : inTelegram
+            ? "заблокировано: Telegram ID не в owner allowlist"
+            : "локальный режим: owner-функции заблокированы";
+      }
+      if (els.accessBadge) {
+        els.accessBadge.textContent = owner ? "owner verified" : "locked";
+        els.accessBadge.className = `badge ${owner ? "safe" : "warn"}`;
+      }
+      if (els.accessBiometry) {
+        if (!tg) els.accessBiometry.textContent = "Telegram WebApp недоступен";
+        else if (!bm) els.accessBiometry.textContent = "BiometricManager недоступен";
+        else {
+          const type = bm.biometricType || "biometric";
+          const granted = bm.isAccessGranted ? "доступ разрешён" : bm.isAccessRequested ? "доступ запрошен" : "доступ не запрошен";
+          els.accessBiometry.textContent = `${type}: ${granted}`;
+        }
+      }
+      if (els.accessNote) {
+        els.accessNote.textContent = owner
+          ? "Кнопки отправляют только staged-intent. Пароль, passkey и биометрия не сохраняются во frontend; backend должен валидировать Telegram initData и allowlist."
+          : "Если MiniApp открыт не из приватного Telegram-чата Ивана, привилегированные intents заблокированы во frontend и должны быть отклонены backend."
+      }
+      [els.passwordSetupBtn, els.faceIdBtn].forEach((button) => {
+        if (!button) return;
+        button.dataset.locked = owner ? "false" : "true";
+        button.title = owner ? "Отправить owner-only intent" : "Нажми, чтобы увидеть причину блокировки: доступно только Ивану в Telegram MiniApp";
+      });
+      return { owner, userId, inTelegram };
+    }
+
+    function ownerAccessPayload(id, title, extra = {}) {
+      return {
+        source: "rednet-miniapp",
+        type: "owner_access_intent",
+        id,
+        title,
+        safety: "sensitive",
+        requester: {
+          telegram_user_id: telegramUserId() || null,
+          is_owner_frontend: isOwnerContext(),
+          has_init_data: Boolean(tg?.initData),
+          platform: tg?.platform || navigator.platform || "unknown"
+        },
+        guardrails: {
+          frontend_only_is_not_authority: true,
+          backend_must_validate_signed_init_data: true,
+          backend_owner_allowlist: [OWNER_TELEGRAM_ID],
+          no_password_or_biometric_secret_in_payload: true
+        },
+        ...extra,
+        ts: new Date().toISOString()
+      };
+    }
+
+    function requireOwnerAccess() {
+      const status = updateAccessPanel();
+      if (status.owner) return true;
+      toast("Owner-only: открой MiniApp из приватного Telegram-чата Ивана");
+      showActionResult(ownerAccessPayload("access-locked", "Owner-only доступ заблокирован", {
+        command: "MiniApp отклоняет привилегированный intent: нет подтверждённого Telegram user_id Ивана во frontend.",
+        blocked: true
+      }), "Доступ заблокирован во frontend. Backend также должен отклонить такой intent.");
+      return false;
+    }
+
+    async function checkOwnerAccess() {
+      const status = updateAccessPanel();
+      showActionResult(ownerAccessPayload("access-check", "Проверка owner-only доступа", {
+        command: status.owner
+          ? "MiniApp видит Telegram user_id Ивана. Backend обязан повторно проверить signed initData."
+          : "MiniApp не видит owner Telegram user_id; привилегированные кнопки заблокированы.",
+        result: status
+      }), status.owner ? "Frontend owner-check OK; нужна backend-проверка initData." : "Owner-check не пройден: privileged intents заблокированы.");
+      toast(status.owner ? "Owner-check OK" : "Owner-check заблокирован");
+    }
+
+    async function requestPasswordSetup() {
+      if (!requireOwnerAccess()) return;
+      await sendPayload(ownerAccessPayload("access-password-setup", "Пароль MiniApp", {
+        command: "Айрин, начни owner-only staged password setup для MiniApp. Не принимай и не сохраняй пароль во frontend; подготовь backend-flow с проверкой signed Telegram initData, audit trail и отдельным подтверждением Ивана.",
+        action: "password_setup_start",
+        no_password_value_in_frontend: true
+      }), "Запрос настройки пароля отправлен Айрин");
+    }
+
+    function callBiometric(method, arg) {
+      return new Promise((resolve) => {
+        const bm = biometricManager();
+        if (!bm || typeof bm[method] !== "function") return resolve(false);
+        let done = false;
+        const finish = (value) => { if (!done) { done = true; resolve(Boolean(value)); } };
+        setTimeout(() => finish(false), 5000);
+        try {
+          bm[method](arg, finish);
+        } catch {
+          try { bm[method](finish); } catch { finish(false); }
+        }
+      });
+    }
+
+    async function initBiometrics() {
+      const bm = biometricManager();
+      if (!bm || typeof bm.init !== "function" || bm.isInited) return Boolean(bm);
+      await callBiometric("init");
+      return true;
+    }
+
+    async function requestFaceId() {
+      if (!requireOwnerAccess()) return;
+      const bm = biometricManager();
+      if (!bm) {
+        await sendPayload(ownerAccessPayload("access-biometric-unavailable", "FaceID / TouchID", {
+          command: "MiniApp не видит Telegram BiometricManager. Подготовь backend/passkey fallback без хранения биометрических секретов во frontend.",
+          biometric: { manager_present: false }
+        }), "BiometricManager недоступен — отправлен fallback-intent");
+        updateAccessPanel();
+        return;
+      }
+
+      await initBiometrics();
+      let accessGranted = Boolean(bm.isAccessGranted);
+      if (!accessGranted && typeof bm.requestAccess === "function") {
+        accessGranted = await callBiometric("requestAccess", { reason: "Owner-only вход в RedNET MiniApp" });
+      }
+      let authenticated = false;
+      if (accessGranted && typeof bm.authenticate === "function") {
+        authenticated = await callBiometric("authenticate", { reason: "Подтвердить owner-only intent RedNET" });
+      }
+
+      updateAccessPanel();
+      await sendPayload(ownerAccessPayload("access-biometric-check", "FaceID / TouchID", {
+        command: "MiniApp выполнил клиентскую проверку Telegram BiometricManager. Используй это только как staged-сигнал; backend всё равно должен проверить signed Telegram initData и owner allowlist.",
+        biometric: {
+          manager_present: true,
+          type: bm.biometricType || "unknown",
+          available: Boolean(bm.isBiometricAvailable),
+          access_requested: Boolean(bm.isAccessRequested),
+          access_granted: Boolean(bm.isAccessGranted || accessGranted),
+          authenticated,
+          token_saved: Boolean(bm.isBiometricTokenSaved)
+        }
+      }), authenticated ? "Биометрическое подтверждение отправлено Айрин" : "Биометрический staged-intent отправлен без успешной auth");
     }
 
     function clampUiScale(value) {
@@ -1619,13 +1824,15 @@
     }
 
     function bootTelegram() {
-      if (!tg) return;
-      try {
-        tg.ready();
-        tg.expand();
-        tg.MainButton?.hide();
-      } catch {}
+      if (tg) {
+        try {
+          tg.ready();
+          tg.expand();
+          tg.MainButton?.hide();
+        } catch {}
+      }
       els.runtimeMode.textContent = isTelegram() ? "Telegram" : "Локальный";
+      updateAccessPanel();
     }
 
     function saveFavorites() {
@@ -1671,6 +1878,7 @@
         ["Позвать", "пинг Айрин", "↗", "call-airin"],
         ["Выгрузки", "статус и нить", "⇩", "exports"],
         ["Сеть", "IP и nmap", "⌬", "network-panel"],
+        ["Доступ", "пароль и FaceID", "🔐", "access-panel"],
         ["Админка", "логи и очереди", "▣", "admin-status"],
         ["Секрет", "одноразовая передача", "●", "secret-panel"],
         ["Поиск", "командная строка", "⌘", "palette"]
@@ -1684,6 +1892,7 @@
         button.onclick = () => {
           if (id === "palette") return openPalette();
           if (id === "secret-panel") return scrollToSecret();
+          if (id === "access-panel") return scrollToAccess();
           if (id === "local-chat") return openLocalChat();
           if (id === "network-panel") return openNetworkPanel();
           runCommand(commands.find((item) => item.id === id));
@@ -2078,6 +2287,17 @@
       const text = JSON.stringify(payload);
       try { tg?.HapticFeedback?.impactOccurred("light"); } catch {}
 
+      if (tg?.initData && !isOwnerContext()) {
+        const blocked = ownerAccessPayload("telegram-non-owner-block", "Telegram MiniApp доступ заблокирован", {
+          command: "Frontend отказал в отправке: signed Telegram initData есть, но user_id не равен owner allowlist 196234280.",
+          attempted_payload_id: payload?.id || null,
+          blocked: true
+        });
+        showActionResult(blocked, "Отправка заблокирована: MiniApp доступен только Ивану.");
+        toast("Доступ заблокирован: не owner Telegram ID");
+        return false;
+      }
+
       const localResult = await sendViaLocalBridge(payload);
       if (localResult.ok) {
         showActionResult(payload, `Доставлено через локальный bridge: ${localResult.url}`);
@@ -2102,26 +2322,34 @@
     }
 
     async function sendViaLocalBridge(payload) {
+      let lastError = "127.0.0.1:8792 не отвечает";
       for (const url of LOCAL_BRIDGE_URLS) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 1600);
         try {
           const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
-            mode: "cors"
+            mode: "cors",
+            signal: controller.signal
           });
           const body = await response.json().catch(() => ({}));
           if (response.ok && body.ok) return { ok: true, url, body };
           return { ok: false, url, error: body.error || `HTTP ${response.status}` };
         } catch (error) {
+          lastError = error?.name === "AbortError" ? `${url} timeout` : `${url} ${error?.message || "недоступен"}`;
           // Пробуем следующий локальный адрес.
+        } finally {
+          clearTimeout(timer);
         }
       }
-      return { ok: false, error: "127.0.0.1:8792 не отвечает" };
+      return { ok: false, error: lastError };
     }
 
     async function runCommand(item) {
       if (!item) return;
+      if (item.ownerOnly && !requireOwnerAccess()) return;
       if (item.safety === "danger") {
         const ok = confirm("Это админское действие с риском. MiniApp отправит только запрос на подтверждение, не выполнит действие напрямую. Продолжить?");
         if (!ok) return;
@@ -2150,6 +2378,11 @@
     function scrollToSecret() {
       $("secretPanel").scrollIntoView({ behavior: "smooth", block: "start" });
       setTimeout(() => $("secretValue").focus(), 320);
+    }
+
+    function scrollToAccess() {
+      updateAccessPanel();
+      $("accessPanel").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function clearSecretForm() {
@@ -2251,6 +2484,9 @@
       await copyText(lastPayloadText || "");
       toast(lastPayloadText ? "Последний JSON скопирован" : "Пока нечего копировать");
     };
+    els.accessCheckBtn.onclick = checkOwnerAccess;
+    els.passwordSetupBtn.onclick = requestPasswordSetup;
+    els.faceIdBtn.onclick = requestFaceId;
     $("tgBtn").onclick = () => {
       bootTelegram();
       toast(isTelegram() ? "Telegram WebApp активен" : "Локальный режим предпросмотра");
