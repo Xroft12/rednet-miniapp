@@ -1034,6 +1034,153 @@
       }
       .bottom button span { font-size: 10px; }
     }
+    /* Compact runtime UI scale. Defaults to 88%, with an operator slider in the top bar. */
+    .shell {
+      font-size: var(--ui-font, 13.2px);
+      padding: var(--ui-shell-pad, 12px) var(--ui-shell-pad, 12px) var(--ui-bottom-pad, 96px);
+    }
+    .top {
+      gap: var(--ui-gap, 10px);
+      min-height: var(--ui-top-height, 58px);
+      padding: 8px 10px;
+    }
+    .mark {
+      width: var(--ui-mark, 39px);
+      height: var(--ui-mark, 39px);
+    }
+    .top-actions {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+    .scale-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: var(--ui-control-height, 37px);
+      padding: 4px 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .045);
+    }
+    .scale-control span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+    .scale-control button {
+      display: grid;
+      place-items: center;
+      min-width: 28px;
+      height: 28px;
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .05);
+      color: #edf6ff;
+      line-height: 1;
+    }
+    .scale-control input {
+      width: 86px;
+      accent-color: var(--green);
+    }
+    .scale-control .scale-value {
+      min-width: 44px;
+      padding: 0 8px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), var(--violet) 55%, var(--green));
+      font-weight: 800;
+    }
+    .icon-button, .text-button, .primary, .secondary, .chip, .send, .copy {
+      min-height: var(--ui-control-height, 37px);
+    }
+    h1 {
+      font-size: clamp(28px, 4.9vw, var(--ui-h1, 48px));
+    }
+    .hero {
+      gap: var(--ui-gap, 10px);
+      margin-top: var(--ui-gap, 10px);
+      padding: var(--ui-hero-pad, 32px);
+      border-radius: var(--ui-radius-xl, 26px);
+    }
+    .hero p {
+      margin-top: 14px;
+      font-size: var(--ui-copy, 15px);
+    }
+    .hero-buttons { margin-top: 20px; }
+    .status-panel {
+      gap: var(--ui-gap, 10px);
+      min-height: var(--ui-status-min, 246px);
+      padding: var(--ui-card-pad, 14px);
+      border-radius: var(--ui-radius-lg, 23px);
+    }
+    .quick, .admin-grid, .work, .network-panel {
+      gap: var(--ui-gap, 10px);
+      margin-top: var(--ui-gap, 10px);
+    }
+    .quick-card {
+      min-height: var(--ui-quick-min, 112px);
+      padding: var(--ui-card-pad, 14px);
+      border-radius: var(--ui-radius-md, 19px);
+    }
+    .quick-icon, .card-icon {
+      width: var(--ui-icon, 38px);
+      height: var(--ui-icon, 38px);
+    }
+    .admin-card, .side, .commands, .network-panel, .action-output {
+      padding: var(--ui-card-pad, 14px);
+      border-radius: var(--ui-radius-lg, 23px);
+    }
+    .command-card {
+      min-height: var(--ui-command-min, 196px);
+      gap: var(--ui-gap, 10px);
+      padding: var(--ui-card-pad, 14px);
+      border-radius: var(--ui-radius-md, 19px);
+    }
+    .favorite {
+      width: 32px;
+      height: 32px;
+    }
+    .list { gap: var(--ui-gap, 10px); }
+    .presence-card, .nmap-card {
+      padding: var(--ui-card-pad, 14px);
+      border-radius: var(--ui-radius-md, 19px);
+    }
+    .bottom {
+      padding: 6px;
+      border-radius: 21px;
+    }
+    .bottom button {
+      padding-top: 6px;
+      padding-bottom: 6px;
+      border-radius: 14px;
+    }
+    @media (max-width: 700px) {
+      .shell {
+        padding: var(--ui-shell-pad, 10px) var(--ui-shell-pad, 10px) var(--ui-bottom-pad, 96px);
+      }
+      .top {
+        align-items: stretch;
+        flex-wrap: wrap;
+      }
+      .brand { flex: 1 1 100%; }
+      .top-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+      .scale-control { min-width: 0; }
+      .scale-control input {
+        width: auto;
+        min-width: 70px;
+      }
+      .hero {
+        padding: var(--ui-card-pad, 14px);
+      }
+      h1 { font-size: clamp(26px, 9vw, var(--ui-h1, 42px)); }
+      .quick { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .quick-card { min-height: 104px; }
+    }
   </style>
 </head>
 <body>
@@ -1047,6 +1194,13 @@
         </span>
       </button>
       <div class="top-actions">
+        <div class="scale-control" aria-label="Масштаб интерфейса" title="Масштаб интерфейса">
+          <span>UI</span>
+          <button id="scaleMinus" type="button" aria-label="Уменьшить масштаб UI">−</button>
+          <input id="scaleRange" aria-label="Масштаб UI" type="range" min="78" max="108" step="1" value="88" />
+          <button id="scalePlus" type="button" aria-label="Увеличить масштаб UI">+</button>
+          <button class="scale-value" id="scaleValue" type="button" aria-label="Сбросить масштаб UI на компактный">88%</button>
+        </div>
         <button class="icon-button" id="tgBtn" type="button" title="Проверить режим Telegram">◐</button>
         <button class="text-button" data-palette type="button">Ctrl K</button>
       </div>
@@ -1374,10 +1528,12 @@
       "admin-publish",
       "admin-restart-request"
     ];
+    const savedUiScale = Number(localStorage.getItem("rednet-miniapp-ui-scale") || "0.88");
     const state = {
       category: "Главная",
       filter: "all",
       query: "",
+      uiScale: Number.isFinite(savedUiScale) ? Math.min(1.08, Math.max(0.78, savedUiScale)) : 0.88,
       favorites: new Set(JSON.parse(localStorage.getItem("rednet-miniapp-favorites") || "[]"))
     };
 
@@ -1411,11 +1567,55 @@
       nmapMode: $("nmapMode"),
       nmapSource: $("nmapSource"),
       nmapExtra: $("nmapExtra"),
-      nmapGuard: $("nmapGuard")
+      nmapGuard: $("nmapGuard"),
+      scaleMinus: $("scaleMinus"),
+      scalePlus: $("scalePlus"),
+      scaleRange: $("scaleRange"),
+      scaleValue: $("scaleValue")
     };
 
     function isTelegram() {
       return Boolean(tg && (tg.initData || (tg.initDataUnsafe && Object.keys(tg.initDataUnsafe).length) || (tg.platform && tg.platform !== "unknown")));
+    }
+
+    function clampUiScale(value) {
+      return Number.isFinite(value) ? Math.min(1.08, Math.max(0.78, value)) : 0.88;
+    }
+
+    function scaledPx(value) {
+      return `${Math.round(value * state.uiScale * 10) / 10}px`;
+    }
+
+    function applyUiScale(save = false) {
+      state.uiScale = clampUiScale(Math.round(state.uiScale * 100) / 100);
+      const root = document.documentElement;
+      root.style.setProperty("--ui-font", scaledPx(15));
+      root.style.setProperty("--ui-shell-pad", scaledPx(14));
+      root.style.setProperty("--ui-bottom-pad", scaledPx(108));
+      root.style.setProperty("--ui-gap", scaledPx(12));
+      root.style.setProperty("--ui-top-height", scaledPx(66));
+      root.style.setProperty("--ui-mark", scaledPx(44));
+      root.style.setProperty("--ui-control-height", scaledPx(42));
+      root.style.setProperty("--ui-h1", scaledPx(58));
+      root.style.setProperty("--ui-hero-pad", scaledPx(38));
+      root.style.setProperty("--ui-copy", scaledPx(17));
+      root.style.setProperty("--ui-status-min", scaledPx(280));
+      root.style.setProperty("--ui-card-pad", scaledPx(16));
+      root.style.setProperty("--ui-radius-xl", scaledPx(30));
+      root.style.setProperty("--ui-radius-lg", scaledPx(26));
+      root.style.setProperty("--ui-radius-md", scaledPx(22));
+      root.style.setProperty("--ui-quick-min", scaledPx(128));
+      root.style.setProperty("--ui-command-min", scaledPx(228));
+      root.style.setProperty("--ui-icon", scaledPx(44));
+      const percent = Math.round(state.uiScale * 100);
+      if (els.scaleRange) els.scaleRange.value = String(percent);
+      if (els.scaleValue) els.scaleValue.textContent = `${percent}%`;
+      if (save) localStorage.setItem("rednet-miniapp-ui-scale", String(state.uiScale));
+    }
+
+    function setUiScale(value, save = true) {
+      state.uiScale = clampUiScale(value);
+      applyUiScale(save);
     }
 
     function bootTelegram() {
@@ -2056,7 +2256,13 @@
       toast(isTelegram() ? "Telegram WebApp активен" : "Локальный режим предпросмотра");
     };
 
+    els.scaleRange.oninput = (event) => setUiScale(Number(event.target.value) / 100);
+    els.scaleMinus.onclick = () => setUiScale(state.uiScale - 0.03);
+    els.scalePlus.onclick = () => setUiScale(state.uiScale + 0.03);
+    els.scaleValue.onclick = () => setUiScale(0.88);
+
     bootTelegram();
+    applyUiScale();
     render();
   </script>
 </body>
